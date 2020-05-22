@@ -26,7 +26,7 @@ def convert_bdc_collection(collection, constants):
     odc_config = OrderedDict()
     odc_config['name'] = collection['id']
     odc_config['description'] = collection['description']
-    odc_config['metadata_type']: constants['metadata_type']
+    odc_config['metadata_type'] = constants['metadata_type']
 
     odc_config['storage'] = OrderedDict()
     odc_config['storage']['crs'] = collection['properties']['bdc:crs']
