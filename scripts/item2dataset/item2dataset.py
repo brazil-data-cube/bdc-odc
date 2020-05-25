@@ -30,7 +30,7 @@ def lon_lat_2_y_x(geo_ref_points):
 
 
 def convert_bdc_item(collection, constants):
-    datasets = []
+    datasets = {}
     features = collection.get_items().features
     crs_proj4 = collection['properties']['bdc:crs']
     sr = osr.SpatialReference()
@@ -83,7 +83,7 @@ def convert_bdc_item(collection, constants):
             else:
                 print("Band '{}' was not found in asset '{}'".format(
                     band, f['id']))
-        datasets.append(yaml.dump(feature))
+        datasets[f['id']] = feature
     return datasets
 
 
@@ -95,7 +95,8 @@ def convert_bdc_item(collection, constants):
 @click.option('--units', default='1', help='Units.')
 @click.option('--url', default='http://brazildatacube.dpi.inpe.br/bdc-stac/0.8.0/', help='BDC STAC url.')
 @click.option('--basepath', default='/gfs', help='Repository base path')
-def main(collection, type, code, format, units, url, basepath):
+@click.option('-o', '--outpath', default='./', help='Output path')
+def main(collection, type, code, format, units, url, basepath, outpath):
     constants = {
         'metadata_type': type,
         'plataform_code': code,
@@ -106,8 +107,11 @@ def main(collection, type, code, format, units, url, basepath):
     s = stac.STAC(url, True)
     c = s.collection(collection)
     yaml_content = convert_bdc_item(c, constants)
-    for y in yaml_content:
-        print(y)
+
+    for key, content in yaml_content.items():
+        file_name = "{}{}.yaml".format(outpath, key)
+        with open(file_name, 'w') as f:
+            yaml.dump(content, f)
 
 
 if __name__ == '__main__':
