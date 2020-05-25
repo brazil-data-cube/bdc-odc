@@ -1,4 +1,3 @@
-#!/bin/env python3
 import stac
 from collections import OrderedDict
 import yaml
@@ -16,12 +15,16 @@ def setup_yaml():
 setup_yaml()
 
 
-def convert_bdc_collection(collection, constants):
-
-    product_type = "{}_{}_{}".format(
+def generate_product_type(collection):
+    return "{}_{}_{}".format(
         collection['properties']['bdc:temporal_composition']['schema'],
         collection['properties']['bdc:temporal_composition']['step'],
         collection['properties']['bdc:temporal_composition']['unit'])
+
+
+def convert_bdc_collection(collection, constants):
+
+    product_type = generate_product_type(collection)
 
     odc_config = OrderedDict()
     odc_config['name'] = collection['id']
