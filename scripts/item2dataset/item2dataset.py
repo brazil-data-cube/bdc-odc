@@ -4,6 +4,7 @@ import yaml
 import click
 from urllib.parse import urlparse
 from osgeo import osr
+import uuid
 
 
 def setup_yaml():
@@ -29,6 +30,20 @@ def lon_lat_2_y_x(geo_ref_points):
     return {key: transform(p) for key, p in geo_ref_points.items()}
 
 
+def generate_id(feature):
+    for link in feature['links']:
+        if link['rel'] == 'self':
+            return str(uuid.uuid5(uuid.NAMESPACE_URL, link['href']))
+    return str(uuid.uuid5(uuid.NAMESPACE_URL, feature['id']))
+
+
+def generate_product_type(collection):
+    return "{}_{}_{}".format(
+        collection['properties']['bdc:temporal_composition']['schema'],
+        collection['properties']['bdc:temporal_composition']['step'],
+        collection['properties']['bdc:temporal_composition']['unit'])
+
+
 def convert_bdc_item(collection, constants):
     datasets = {}
     features = collection.get_items().features
@@ -37,11 +52,13 @@ def convert_bdc_item(collection, constants):
     sr.ImportFromProj4(crs_proj4)
     crs_wkt = sr.ExportToWkt()
 
+    product_type = generate_product_type(collection)
+
     for f in features:
         feature = OrderedDict()
-        feature['id'] = f['id']
+        feature['id'] = generate_id(f)
         feature['creation_dt'] = f['properties']['datetime']
-        feature['product_type'] = ''
+        feature['product_type'] = product_type
         feature['platform'] = {'code': constants['plataform_code']}
         feature['instrument'] = {'name': collection['id']}
         feature['format'] = {'name': constants['format_name']}
