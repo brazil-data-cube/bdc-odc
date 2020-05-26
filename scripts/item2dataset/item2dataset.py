@@ -6,6 +6,12 @@ from urllib.parse import urlparse
 from osgeo import osr
 import uuid
 
+# Fontes:
+# https://github.com/opendatacube/datacube-core/blob/datacube-1.7/docs/ops/dataset_documents.rst
+# https://github.com/opendatacube/datacube-core/blob/0650038d113f8d7f5f4a47075eea706fe24a84fb/docs/config_samples/match_rules/ls5_scenes.yaml
+# https://github.com/opendatacube/datacube-core/blob/c4595b91387011d4deec3c2d63f88e9e9aa01573/datacube/index/default-metadata-types.yaml
+#
+
 
 def setup_yaml():
     """ https://stackoverflow.com/a/8661021 """
@@ -51,6 +57,7 @@ def convert_bdc_item(collection, constants):
     sr = osr.SpatialReference()
     sr.ImportFromProj4(crs_proj4)
     crs_wkt = sr.ExportToWkt()
+    crs_wkt = crs_wkt.replace('\n', '#')
 
     product_type = generate_product_type(collection)
 
@@ -62,7 +69,7 @@ def convert_bdc_item(collection, constants):
         feature['platform'] = {'code': constants['plataform_code']}
         feature['instrument'] = {'name': collection['id']}
         feature['format'] = {'name': constants['format_name']}
-        feature['lineage'] = {'source_datasets:': {}}
+        feature['lineage'] = {'source_datasets': {}}
 
         feature['extent'] = OrderedDict()
         feature['extent']['coord'] = OrderedDict()
@@ -82,8 +89,7 @@ def convert_bdc_item(collection, constants):
         feature['grid_spatial']['projection'] = OrderedDict()
         feature['grid_spatial']['projection']['geo_ref_points'] = lon_lat_2_y_x(
             feature['extent']['coord'])
-        feature['grid_spatial']['projection']['spatial_reference'] = crs_wkt.replace(
-            '\n', '#').replace('\r', '---')
+        feature['grid_spatial']['projection']['spatial_reference'] = crs_wkt
         feature['image'] = OrderedDict()
         feature['image']['bands'] = OrderedDict()
         band_counter = 1
