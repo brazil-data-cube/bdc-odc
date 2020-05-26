@@ -82,7 +82,8 @@ def convert_bdc_item(collection, constants):
         feature['grid_spatial']['projection'] = OrderedDict()
         feature['grid_spatial']['projection']['geo_ref_points'] = lon_lat_2_y_x(
             feature['extent']['coord'])
-        feature['grid_spatial']['projection']['spatial_reference'] = crs_wkt
+        feature['grid_spatial']['projection']['spatial_reference'] = crs_wkt.replace(
+            '\n', '#').replace('\r', '---')
         feature['image'] = OrderedDict()
         feature['image']['bands'] = OrderedDict()
         band_counter = 1
@@ -129,6 +130,7 @@ def main(collection, type, code, format, units, url, basepath, outpath):
         file_name = "{}{}.yaml".format(outpath, key)
         with open(file_name, 'w') as f:
             yaml.dump(content, f)
+            # print(yaml.dump(content))
 
 
 if __name__ == '__main__':
