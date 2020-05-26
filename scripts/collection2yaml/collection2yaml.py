@@ -45,35 +45,37 @@ def convert_bdc_collection(collection, constants):
         m = OrderedDict()
         m['name'] = data['name']
         m['aliases'] = [data['name'], ]
-        m['dtype'] = data['data_type']
+        m['dtype'] = data['data_type'].lower()
         m['nodata'] = data['fill']
         m['units'] = constants['units']
         return m
 
     odc_config['metadata'] = OrderedDict()
-    odc_config['metadata']['plataform'] = {'code': constants['plataform_code']}
+    odc_config['metadata']['platform'] = {'code': constants['platform_code']}
     odc_config['metadata']['instrument'] = {'name': collection['id']}
     odc_config['metadata']['product_type'] = product_type
     odc_config['metadata']['format'] = {'name': constants['format_name']}
     odc_config['measurements'] = [measurements(v)
-                                  for k, v in collection['properties']['bdc:bands'].items()]
+                                  for k, v in collection['properties']['bdc:bands'].items() if k not in constants['ignore']]
     return odc_config  # default_flow_style=None
 
 
 @click.command()
 @click.option('-c', '--collection', required=True, help='Collection name (Ex. C4_64_16D_MED).')
 @click.option('-t', '--type', default='eo', help='Metadata type.')
-@click.option('-p', '--code', default='BDC', help='Plataform code.')
+@click.option('-p', '--code', default='BDC', help='Platform code.')
 @click.option('-f', '--format', default='GeoTiff', help='Format name.')
 @click.option('--units', default='1', help='Units.')
 @click.option('--url', default='http://brazildatacube.dpi.inpe.br/bdc-stac/0.8.0/', help='BDC STAC url.')
 @click.option('-o', '--outfile', default=None, help='Output file')
-def main(collection, type, code, format, units, url, outfile):
+@click.option('-i', '--ignore', default=['quality'], help='List of bands to ignore')
+def main(collection, type, code, format, units, url, outfile, ignore):
     constants = {
         'metadata_type': type,
-        'plataform_code': code,
+        'platform_code': code,
         'format_name': format,
-        'units': units
+        'units': units,
+        'ignore': ignore
     }
     s = stac.STAC(url, True)
     c = s.collection(collection)

@@ -94,19 +94,20 @@ def convert_bdc_item(collection, constants):
         feature['image']['bands'] = OrderedDict()
         band_counter = 1
         for band in collection['properties']['bdc:bands'].keys():
-            if band in f['assets']:
-                feature['image']['bands'][band] = OrderedDict()
-                feature['image']['bands'][band]['path'] = href_to_path(
-                    f['assets'][band]['href'], constants['basepath'])
-                # feature['image']['bands'][band]['type'] = ''
-                feature['image']['bands'][band]['label'] = band
-                feature['image']['bands'][band]['number'] = band_counter
-                feature['image']['bands'][band]['cell_size'] = collection['properties']['bdc:bands'][band]['resolution_x']
-                feature['image']['bands'][band]['layer'] = '1'
-                band_counter += 1
-            else:
-                print("Band '{}' was not found in asset '{}'".format(
-                    band, f['id']))
+            if band not in constants['ignore']:
+                if band in f['assets']:
+                    feature['image']['bands'][band] = OrderedDict()
+                    feature['image']['bands'][band]['path'] = href_to_path(
+                        f['assets'][band]['href'], constants['basepath'])
+                    # feature['image']['bands'][band]['type'] = ''
+                    feature['image']['bands'][band]['label'] = band
+                    feature['image']['bands'][band]['number'] = band_counter
+                    feature['image']['bands'][band]['cell_size'] = collection['properties']['bdc:bands'][band]['resolution_x']
+                    feature['image']['bands'][band]['layer'] = '1'
+                    band_counter += 1
+                else:
+                    print("Band '{}' was not found in asset '{}'".format(
+                        band, f['id']))
         datasets[f['id']] = feature
     return datasets
 
@@ -120,13 +121,15 @@ def convert_bdc_item(collection, constants):
 @click.option('--url', default='http://brazildatacube.dpi.inpe.br/bdc-stac/0.8.0/', help='BDC STAC url.')
 @click.option('--basepath', default='/gfs', help='Repository base path')
 @click.option('-o', '--outpath', default='./', help='Output path')
-def main(collection, type, code, format, units, url, basepath, outpath):
+@click.option('-i', '--ignore', default=['quality'], help='List of bands to ignore')
+def main(collection, type, code, format, units, url, basepath, outpath, ignore):
     constants = {
         'metadata_type': type,
         'plataform_code': code,
         'format_name': format,
         'units': units,
-        'basepath': basepath
+        'basepath': basepath,
+        'ignore': ignore
     }
     s = stac.STAC(url, True)
     c = s.collection(collection)
