@@ -50,6 +50,16 @@ def generate_product_type(collection):
         collection['properties']['bdc:temporal_composition']['unit'])
 
 
+def convert_coords(coords, in_spatial_ref, out_spatial_ref):
+    t = osr.CoordinateTransformation(in_spatial_ref, out_spatial_ref)
+
+    def transform(p):
+        a = t.TransformPoint(p['lon'], p['lat'])
+        return {'lon': a[0], 'lat': a[1]}
+
+    return {key: transform(p) for key, p in coords.items()}
+
+
 def convert_bdc_item(collection, constants):
     datasets = {}
     features = collection.get_items().features
@@ -58,6 +68,13 @@ def convert_bdc_item(collection, constants):
     sr.ImportFromProj4(crs_proj4)
     crs_wkt = sr.ExportToWkt()
     crs_wkt = crs_wkt.replace('\n', '#')
+
+    out_spatial_ref = osr.SpatialReference()
+
+    out_spatial_ref.ImportFromProj4(crs_proj4)
+
+    in_spatial_ref = osr.SpatialReference()
+    in_spatial_ref.ImportFromEPSG(4326)
 
     product_type = generate_product_type(collection)
 
@@ -73,22 +90,30 @@ def convert_bdc_item(collection, constants):
 
         feature['extent'] = OrderedDict()
         feature['extent']['coord'] = OrderedDict()
-        feature['extent']['coord']['ll'] = {'lat': f['geometry']['coordinates'][0][1][1],
-                                            'lon': f['geometry']['coordinates'][0][1][0]}
-        feature['extent']['coord']['lr'] = {'lat': f['geometry']['coordinates'][0][2][1],
-                                            'lon': f['geometry']['coordinates'][0][2][0]}
-        feature['extent']['coord']['ul'] = {'lat': f['geometry']['coordinates'][0][0][1],
-                                            'lon': f['geometry']['coordinates'][0][0][0]}
-        feature['extent']['coord']['ur'] = {'lat': f['geometry']['coordinates'][0][3][1],
-                                            'lon': f['geometry']['coordinates'][0][3][0]}
+        # OK
+        feature['extent']['coord']['ll'] = {'lat': f['geometry']['coordinates'][0][3][0],
+                                            'lon': f['geometry']['coordinates'][0][3][1]}
+        # OK
+        feature['extent']['coord']['lr'] = {'lat': f['geometry']['coordinates'][0][2][0],
+                                            'lon': f['geometry']['coordinates'][0][2][1]}
+        # OK
+        feature['extent']['coord']['ul'] = {'lat': f['geometry']['coordinates'][0][0][0],
+                                            'lon': f['geometry']['coordinates'][0][0][1]}
+        # OK
+        feature['extent']['coord']['ur'] = {'lat': f['geometry']['coordinates'][0][1][0],
+                                            'lon': f['geometry']['coordinates'][0][1][1]}
+        ####
         feature['extent']['from_dt'] = f['properties']['datetime']
         feature['extent']['center_dt'] = f['properties']['datetime']
         feature['extent']['to_dt'] = f['properties']['datetime']
 
+        cc = convert_coords(feature['extent']['coord'],
+                            in_spatial_ref, out_spatial_ref)
+
         feature['grid_spatial'] = OrderedDict()
         feature['grid_spatial']['projection'] = OrderedDict()
         feature['grid_spatial']['projection']['geo_ref_points'] = lon_lat_2_y_x(
-            feature['extent']['coord'])
+            cc)
         feature['grid_spatial']['projection']['spatial_reference'] = crs_wkt
         feature['image'] = OrderedDict()
         feature['image']['bands'] = OrderedDict()
@@ -100,10 +125,10 @@ def convert_bdc_item(collection, constants):
                     feature['image']['bands'][band]['path'] = href_to_path(
                         f['assets'][band]['href'], constants['basepath'])
                     # feature['image']['bands'][band]['type'] = ''
-                    feature['image']['bands'][band]['label'] = band
-                    feature['image']['bands'][band]['number'] = band_counter
-                    feature['image']['bands'][band]['cell_size'] = collection['properties']['bdc:bands'][band]['resolution_x']
-                    feature['image']['bands'][band]['layer'] = '1'
+                    #feature['image']['bands'][band]['label'] = band
+                    #feature['image']['bands'][band]['number'] = band_counter
+                    #feature['image']['bands'][band]['cell_size'] = collection['properties']['bdc:bands'][band]['resolution_x']
+                    feature['image']['bands'][band]['layer'] = 1
                     band_counter += 1
                 else:
                     print("Band '{}' was not found in asset '{}'".format(

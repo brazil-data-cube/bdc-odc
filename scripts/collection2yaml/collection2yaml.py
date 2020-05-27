@@ -38,8 +38,10 @@ def convert_bdc_collection(collection, constants):
     odc_config['storage']['crs'] = collection['properties']['bdc:crs']
     odc_config['storage']['resolution'] = OrderedDict()
     first_band = next(iter(collection['properties']['bdc:bands']))
-    odc_config['storage']['resolution']['x'] = collection['properties']['bdc:bands'][first_band]['resolution_x']
-    odc_config['storage']['resolution']['y'] = collection['properties']['bdc:bands'][first_band]['resolution_y']
+    odc_config['storage']['resolution']['x'] = int(
+        collection['properties']['bdc:bands'][first_band]['resolution_x'])
+    odc_config['storage']['resolution']['y'] = int(
+        collection['properties']['bdc:bands'][first_band]['resolution_y'])*-1
 
     def measurements(data):
         m = OrderedDict()
