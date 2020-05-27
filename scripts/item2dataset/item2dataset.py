@@ -17,7 +17,7 @@ def setup_yaml():
     """ https://stackoverflow.com/a/8661021 """
 
     def represent_dict_order(self, data): return self.represent_mapping(
-            'tag:yaml.org,2002:map', data.items())
+        'tag:yaml.org,2002:map', data.items())
     yaml.add_representer(OrderedDict, represent_dict_order)
 
 
@@ -61,9 +61,6 @@ def convert_coords(coords, in_spatial_ref, out_spatial_ref):
 
 
 def convert_bdc_item(collection, constants):
-    datasets = {}
-    features = collection.get_items(filter={'limit':'999999'}).features
-    
     crs_proj4 = collection['properties']['bdc:crs']
     sr = osr.SpatialReference()
     sr.ImportFromProj4(crs_proj4)
@@ -79,63 +76,75 @@ def convert_bdc_item(collection, constants):
 
     product_type = generate_product_type(collection)
 
-    for f in features:
-        feature = OrderedDict()
-        feature['id'] = generate_id(f)
-        feature['creation_dt'] = f['properties']['datetime']
-        feature['product_type'] = product_type
-        feature['platform'] = {'code': constants['plataform_code']}
-        feature['instrument'] = {'name': collection['id']}
-        feature['format'] = {'name': constants['format_name']}
-        feature['lineage'] = {'source_datasets': {}}
+    limit = 120
+    page = 1
+    max_page = 999999999
+    for page in range(1, max_page+1):
+        features = collection.get_items(
+            filter={'page': page, 'limit': limit}).features
 
-        feature['extent'] = OrderedDict()
-        feature['extent']['coord'] = OrderedDict()
-        # OK
-        feature['extent']['coord']['ll'] = {'lat': f['geometry']['coordinates'][0][3][0],
-                                            'lon': f['geometry']['coordinates'][0][3][1]}
-        # OK
-        feature['extent']['coord']['lr'] = {'lat': f['geometry']['coordinates'][0][2][0],
-                                            'lon': f['geometry']['coordinates'][0][2][1]}
-        # OK
-        feature['extent']['coord']['ul'] = {'lat': f['geometry']['coordinates'][0][0][0],
-                                            'lon': f['geometry']['coordinates'][0][0][1]}
-        # OK
-        feature['extent']['coord']['ur'] = {'lat': f['geometry']['coordinates'][0][1][0],
-                                            'lon': f['geometry']['coordinates'][0][1][1]}
-        ####
-        feature['extent']['from_dt'] = f['properties']['datetime']
-        feature['extent']['center_dt'] = f['properties']['datetime']
-        feature['extent']['to_dt'] = f['properties']['datetime']
+        if len(features) == 0:
+            print("Parei na pagina", page)
+            break
 
-        cc = convert_coords(feature['extent']['coord'],
-                            in_spatial_ref, out_spatial_ref)
+        for f in features:
+            feature = OrderedDict()
+            feature['id'] = generate_id(f)
+            feature['creation_dt'] = f['properties']['datetime']
+            feature['product_type'] = product_type
+            feature['platform'] = {'code': constants['plataform_code']}
+            feature['instrument'] = {'name': collection['id']}
+            feature['format'] = {'name': constants['format_name']}
+            feature['lineage'] = {'source_datasets': {}}
 
-        feature['grid_spatial'] = OrderedDict()
-        feature['grid_spatial']['projection'] = OrderedDict()
-        feature['grid_spatial']['projection']['geo_ref_points'] = lon_lat_2_y_x(
-            cc)
-        feature['grid_spatial']['projection']['spatial_reference'] = crs_wkt
-        feature['image'] = OrderedDict()
-        feature['image']['bands'] = OrderedDict()
-        band_counter = 1
-        for band in collection['properties']['bdc:bands'].keys():
-            if band not in constants['ignore']:
-                if band in f['assets']:
-                    feature['image']['bands'][band] = OrderedDict()
-                    feature['image']['bands'][band]['path'] = href_to_path(
-                        f['assets'][band]['href'], constants['basepath'])
-                    # feature['image']['bands'][band]['type'] = ''
-                    #feature['image']['bands'][band]['label'] = band
-                    #feature['image']['bands'][band]['number'] = band_counter
-                    #feature['image']['bands'][band]['cell_size'] = collection['properties']['bdc:bands'][band]['resolution_x']
-                    feature['image']['bands'][band]['layer'] = 1
-                    band_counter += 1
-                else:
-                    print("Band '{}' was not found in asset '{}'".format(
-                        band, f['id']))
-        datasets[f['id']] = feature
-    return datasets
+            feature['extent'] = OrderedDict()
+            feature['extent']['coord'] = OrderedDict()
+            # OK
+            feature['extent']['coord']['ll'] = {'lat': f['geometry']['coordinates'][0][3][0],
+                                                'lon': f['geometry']['coordinates'][0][3][1]}
+            # OK
+            feature['extent']['coord']['lr'] = {'lat': f['geometry']['coordinates'][0][2][0],
+                                                'lon': f['geometry']['coordinates'][0][2][1]}
+            # OK
+            feature['extent']['coord']['ul'] = {'lat': f['geometry']['coordinates'][0][0][0],
+                                                'lon': f['geometry']['coordinates'][0][0][1]}
+            # OK
+            feature['extent']['coord']['ur'] = {'lat': f['geometry']['coordinates'][0][1][0],
+                                                'lon': f['geometry']['coordinates'][0][1][1]}
+            ####
+            feature['extent']['from_dt'] = f['properties']['datetime']
+            feature['extent']['center_dt'] = f['properties']['datetime']
+            feature['extent']['to_dt'] = f['properties']['datetime']
+
+            cc = convert_coords(feature['extent']['coord'],
+                                in_spatial_ref, out_spatial_ref)
+
+            feature['grid_spatial'] = OrderedDict()
+            feature['grid_spatial']['projection'] = OrderedDict()
+            feature['grid_spatial']['projection']['geo_ref_points'] = lon_lat_2_y_x(
+                cc)
+            feature['grid_spatial']['projection']['spatial_reference'] = crs_wkt
+            feature['image'] = OrderedDict()
+            feature['image']['bands'] = OrderedDict()
+            band_counter = 1
+            for band in collection['properties']['bdc:bands'].keys():
+                if band not in constants['ignore']:
+                    if band in f['assets']:
+                        feature['image']['bands'][band] = OrderedDict()
+                        feature['image']['bands'][band]['path'] = href_to_path(
+                            f['assets'][band]['href'], constants['basepath'])
+                        # feature['image']['bands'][band]['type'] = ''
+                        # feature['image']['bands'][band]['label'] = band
+                        # feature['image']['bands'][band]['number'] = band_counter
+                        # feature['image']['bands'][band]['cell_size'] = collection['properties']['bdc:bands'][band]['resolution_x']
+                        feature['image']['bands'][band]['layer'] = 1
+                        band_counter += 1
+                    else:
+                        print("Band '{}' was not found in asset '{}'".format(
+                            band, f['id']))
+            file_name = "{}{}.yaml".format(constants['outpath'], f['id'])
+            with open(file_name, 'w') as f:
+                yaml.dump(feature, f)
 
 
 @click.command()
@@ -155,17 +164,12 @@ def main(collection, type, code, format, units, url, basepath, outpath, ignore):
         'format_name': format,
         'units': units,
         'basepath': basepath,
-        'ignore': ignore
+        'ignore': ignore,
+        'outpath': outpath
     }
     s = stac.STAC(url, True)
     c = s.collection(collection)
-    yaml_content = convert_bdc_item(c, constants)
-
-    for key, content in yaml_content.items():
-        file_name = "{}{}.yaml".format(outpath, key)
-        with open(file_name, 'w') as f:
-            yaml.dump(content, f)
-            # print(yaml.dump(content))
+    convert_bdc_item(c, constants)
 
 
 if __name__ == '__main__':
