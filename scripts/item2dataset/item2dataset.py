@@ -80,11 +80,10 @@ def convert_bdc_item(collection, constants):
     page = 1
     max_page = 999999999
     for page in range(1, max_page+1):
+        print(".",end='')
         features = collection.get_items(
             filter={'page': page, 'limit': limit}).features
-
         if len(features) == 0:
-            print("Parei na pagina", page)
             break
 
         for f in features:
