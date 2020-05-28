@@ -54,7 +54,7 @@ def convert_coords(coords, in_spatial_ref, out_spatial_ref):
     t = osr.CoordinateTransformation(in_spatial_ref, out_spatial_ref)
 
     def transform(p):
-        a = t.TransformPoint(p['lon'], p['lat'])
+        a = t.TransformPoint(p['lat'], p['lon'])
         return {'lon': a[0], 'lat': a[1]}
 
     return {key: transform(p) for key, p in coords.items()}
