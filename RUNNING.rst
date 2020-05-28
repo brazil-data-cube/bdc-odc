@@ -7,8 +7,8 @@
 
 
 
-Building the Docker Imagens
-===========================
+Building the Docker Images
+==========================
 
 On the command line use the `git clone` command to clone the software repository:
 
@@ -60,10 +60,10 @@ Now, you will need an instance of PostgreSQL up and running in order to launch t
                 --network bdc-odc-net \
                 --restart unless-stopped \
                 -v bdc-odc-pgdata_vol:/var/lib/postgresql/data \
-                -e "PGDATA=/var/lib/postgresql/data" \
-                -e "POSTGRES_DB=opendatacube" \
-                -e "POSTGRES_PASSWORD=change-me" \
-                -e "POSTGRES_USER=opendatacube" \
+                -e PGDATA=/var/lib/postgresql/data \
+                -e POSTGRES_DB=opendatacube \
+                -e POSTGRES_PASSWORD=change-me \
+                -e POSTGRES_USER=opendatacube \
                 postgres:10
 
 After that, you can initialize Open Data Cube instance with the following command:
