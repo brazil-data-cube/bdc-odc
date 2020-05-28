@@ -32,13 +32,13 @@ echo "Criando metadados do produto ${collection_id}"
 python3 ${script_path}/collection2yaml/collection2yaml.py -c ${collection_id} -o ${collection_path}/${collection_id}.yaml
 
 echo "Cadastrando produto"
-#datacube product add ${collection_path}/${collection_id}.yaml
+datacube product add ${collection_path}/${collection_id}.yaml
 
 echo "Extraindo metadados dos itens (datasets)"
 python3 ${script_path}/item2dataset/item2dataset.py -c ${collection_id} -o ${dataset_path}/
 
 echo "Indexando datasets"
-#find ${dataset_path}/*.yaml -exec datacube -vvv dataset add -p ${collection_id} {} \;
+find ${dataset_path}/*.yaml -exec datacube -v dataset add -p ${collection_id} {} \;
 
 
 

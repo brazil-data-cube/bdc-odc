@@ -78,13 +78,19 @@ def convert_bdc_item(collection, constants):
 
     limit = 120
     page = 1
-    max_page = 999999999
+    max_page = 1
+    total_itens = 0
     for page in range(1, max_page+1):
-        print(".",end='')
+        print(".", end='')
         features = collection.get_items(
             filter={'page': page, 'limit': limit}).features
+
         if len(features) == 0:
             break
+
+        if constants['max_itens'] is not None:
+            if constants['max_itens'] == total_itens:
+                break
 
         for f in features:
             feature = OrderedDict()
@@ -144,6 +150,7 @@ def convert_bdc_item(collection, constants):
             file_name = "{}{}.yaml".format(constants['outpath'], f['id'])
             with open(file_name, 'w') as f:
                 yaml.dump(feature, f)
+            total_itens += 1
 
 
 @click.command()
@@ -156,7 +163,8 @@ def convert_bdc_item(collection, constants):
 @click.option('--basepath', default='/gfs', help='Repository base path')
 @click.option('-o', '--outpath', default='./', help='Output path')
 @click.option('-i', '--ignore', default=['quality'], help='List of bands to ignore')
-def main(collection, type, code, format, units, url, basepath, outpath, ignore):
+@click.option('-m', '--max_items', default=None, help='Max items')
+def main(collection, type, code, format, units, url, basepath, outpath, ignore, max_items):
     constants = {
         'metadata_type': type,
         'plataform_code': code,
@@ -164,7 +172,8 @@ def main(collection, type, code, format, units, url, basepath, outpath, ignore):
         'units': units,
         'basepath': basepath,
         'ignore': ignore,
-        'outpath': outpath
+        'outpath': outpath,
+        'max_items': max_items
     }
     s = stac.STAC(url, True)
     c = s.collection(collection)
