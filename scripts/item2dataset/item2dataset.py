@@ -4,7 +4,11 @@ import yaml
 import click
 from urllib.parse import urlparse
 from osgeo import osr
+from osgeo import gdal
 import uuid
+from datetime import datetime
+
+import osgeo
 
 # Fontes:
 # https://github.com/opendatacube/datacube-core/blob/datacube-1.7/docs/ops/dataset_documents.rst
@@ -51,11 +55,29 @@ def generate_product_type(collection):
 
 
 def convert_coords(coords, in_spatial_ref, out_spatial_ref):
+
+    t = osr.CoordinateTransformation(in_spatial_ref, out_spatial_ref)
+
+    if int(osgeo.__version__[0]) >= 3:
+        # GDAL 3 changes axis order: https://github.com/OSGeo/gdal/issues/1546
+        in_spatial_ref.SetAxisMappingStrategy(
+            osgeo.osr.OAMS_TRADITIONAL_GIS_ORDER)
+        out_spatial_ref.SetAxisMappingStrategy(
+            osgeo.osr.OAMS_TRADITIONAL_GIS_ORDER)
+
+    def transform(p):
+        a = t.TransformPoint(p['lon'], p['lat'])
+        return {'lon': a[0], 'lat': a[1]}
+
+    return {key: transform(p) for key, p in coords.items()}
+
+
+def convert_coords_xy(coords, in_spatial_ref, out_spatial_ref):
     t = osr.CoordinateTransformation(in_spatial_ref, out_spatial_ref)
 
     def transform(p):
-        a = t.TransformPoint(p['lat'], p['lon'])
-        return {'lon': a[0], 'lat': a[1]}
+        a = t.TransformPoint(p['x'], p['y'])
+        return {'x': a[0], 'y': a[1]}
 
     return {key: transform(p) for key, p in coords.items()}
 
@@ -65,7 +87,6 @@ def convert_bdc_item(collection, constants):
     sr = osr.SpatialReference()
     sr.ImportFromProj4(crs_proj4)
     crs_wkt = sr.ExportToWkt()
-    crs_wkt = crs_wkt.replace('\n', '#')
 
     out_spatial_ref = osr.SpatialReference()
 
@@ -78,24 +99,33 @@ def convert_bdc_item(collection, constants):
 
     limit = 120
     page = 1
-    max_page = 1
-    total_itens = 0
+    max_page = 99999999
+    total_items = 0
+    max_items = constants['max_items']
+
     for page in range(1, max_page+1):
-        print(".", end='')
+
+        if max_items is not None:
+            if max_items == total_items:
+                break
+
+        if limit > (max_items-total_items):
+            limit = (max_items-total_items)
+
         features = collection.get_items(
             filter={'page': page, 'limit': limit}).features
 
         if len(features) == 0:
             break
 
-        if constants['max_itens'] is not None:
-            if constants['max_itens'] == total_itens:
-                break
-
         for f in features:
+            datetime_object = datetime.strptime(
+                f['properties']['datetime'], '%Y-%m-%d')
+            datetime_str = datetime_object.strftime("%Y-%m-%d %H:%M:%S.%fZ")
+
             feature = OrderedDict()
             feature['id'] = generate_id(f)
-            feature['creation_dt'] = f['properties']['datetime']
+            feature['creation_dt'] = datetime_str
             feature['product_type'] = product_type
             feature['platform'] = {'code': constants['plataform_code']}
             feature['instrument'] = {'name': collection['id']}
@@ -104,30 +134,42 @@ def convert_bdc_item(collection, constants):
 
             feature['extent'] = OrderedDict()
             feature['extent']['coord'] = OrderedDict()
-            # OK
-            feature['extent']['coord']['ll'] = {'lat': f['geometry']['coordinates'][0][3][0],
-                                                'lon': f['geometry']['coordinates'][0][3][1]}
-            # OK
-            feature['extent']['coord']['lr'] = {'lat': f['geometry']['coordinates'][0][2][0],
-                                                'lon': f['geometry']['coordinates'][0][2][1]}
-            # OK
             feature['extent']['coord']['ul'] = {'lat': f['geometry']['coordinates'][0][0][0],
                                                 'lon': f['geometry']['coordinates'][0][0][1]}
-            # OK
             feature['extent']['coord']['ur'] = {'lat': f['geometry']['coordinates'][0][1][0],
                                                 'lon': f['geometry']['coordinates'][0][1][1]}
-            ####
-            feature['extent']['from_dt'] = f['properties']['datetime']
-            feature['extent']['center_dt'] = f['properties']['datetime']
-            feature['extent']['to_dt'] = f['properties']['datetime']
+            feature['extent']['coord']['lr'] = {'lat': f['geometry']['coordinates'][0][2][0],
+                                                'lon': f['geometry']['coordinates'][0][2][1]}
+            feature['extent']['coord']['ll'] = {'lat': f['geometry']['coordinates'][0][3][0],
+                                                'lon': f['geometry']['coordinates'][0][3][1]}
 
-            cc = convert_coords(feature['extent']['coord'],
-                                in_spatial_ref, out_spatial_ref)
+            ####
+            feature['extent']['from_dt'] = datetime_str
+            feature['extent']['center_dt'] = datetime_str
+            feature['extent']['to_dt'] = datetime_str
+
+            # Extract image bbox
+            first_band = next(iter(collection['properties']['bdc:bands']))
+            first_band_path = href_to_path(
+                f['assets'][first_band]['href'], constants['basepath'])
+
+            src = gdal.Open(first_band_path)
+            ulx, xres, _, uly, _, yres = src.GetGeoTransform()
+            lrx = ulx + (src.RasterXSize * xres)
+            lry = uly + (src.RasterYSize * yres)
 
             feature['grid_spatial'] = OrderedDict()
             feature['grid_spatial']['projection'] = OrderedDict()
-            feature['grid_spatial']['projection']['geo_ref_points'] = lon_lat_2_y_x(
-                cc)
+            feature['grid_spatial']['projection']['geo_ref_points'] = OrderedDict()
+            feature['grid_spatial']['projection']['geo_ref_points']['ul'] = {
+                'x': ulx, 'y': uly}
+            feature['grid_spatial']['projection']['geo_ref_points']['ur'] = {
+                'x': lrx, 'y': uly}
+            feature['grid_spatial']['projection']['geo_ref_points']['lr'] = {
+                'x': lrx, 'y': lry}
+            feature['grid_spatial']['projection']['geo_ref_points']['ll'] = {
+                'x': ulx, 'y': lry}
+
             feature['grid_spatial']['projection']['spatial_reference'] = crs_wkt
             feature['image'] = OrderedDict()
             feature['image']['bands'] = OrderedDict()
@@ -138,10 +180,6 @@ def convert_bdc_item(collection, constants):
                         feature['image']['bands'][band] = OrderedDict()
                         feature['image']['bands'][band]['path'] = href_to_path(
                             f['assets'][band]['href'], constants['basepath'])
-                        # feature['image']['bands'][band]['type'] = ''
-                        # feature['image']['bands'][band]['label'] = band
-                        # feature['image']['bands'][band]['number'] = band_counter
-                        # feature['image']['bands'][band]['cell_size'] = collection['properties']['bdc:bands'][band]['resolution_x']
                         feature['image']['bands'][band]['layer'] = 1
                         band_counter += 1
                     else:
@@ -150,7 +188,7 @@ def convert_bdc_item(collection, constants):
             file_name = "{}{}.yaml".format(constants['outpath'], f['id'])
             with open(file_name, 'w') as f:
                 yaml.dump(feature, f)
-            total_itens += 1
+            total_items += 1
 
 
 @click.command()
@@ -173,7 +211,7 @@ def main(collection, type, code, format, units, url, basepath, outpath, ignore, 
         'basepath': basepath,
         'ignore': ignore,
         'outpath': outpath,
-        'max_items': max_items
+        'max_items': int(max_items)
     }
     s = stac.STAC(url, True)
     c = s.collection(collection)
