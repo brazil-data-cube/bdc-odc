@@ -42,14 +42,14 @@ Initially, we will create a folder where the metadata will be saved:
 
 .. code-block:: shell
 
-    $ mkdir -p ~/products/C4_64_16D_MED
+    $ mkdir -p ~/products/C4_64_16D_MED/datasets
 
 We provided a script for extracting the metadata from a `Collection` of BDC STAC to the format of an ODC `Product`.
 To produce the methods for the `C4_64_16D_MED` `Collection`, use the following command:
 
 .. code-block:: shell
 
-    $ bdc-odc/scripts/collection2yaml/collection2yaml.py -c C4_64_16D_MED -o ~/products/C4_64_16D_MED/C4_64_16D_MED.yaml
+    $ python3 bdc-odc/scripts/collection2yaml/collection2yaml.py -c C4_64_16D_MED -o ~/products/C4_64_16D_MED/C4_64_16D_MED.yaml
 
 You can see the created file with the following command:
 
@@ -75,7 +75,7 @@ To create the metadata files from `C4_64_16D_MED` `Collection` use the following
 
 .. code-block:: shell
 
-    $ python3 ~/Devel/bdc-odc/scripts/item2dataset/item2dataset.py -c C4_64_16D_MED -o ~/products/C4_64_16D_MED/datasets/
+    $ python3 bdc-odc/scripts/item2dataset/item2dataset.py -c C4_64_16D_MED -o ~/products/C4_64_16D_MED/datasets/
 
 For each `Item` in the `Collection`, a YAML file will be created with the metadata to be inserted as a `Dataset` in the ODC.
 
