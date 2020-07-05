@@ -47,14 +47,14 @@ First you will need to create an docker network:
 
 .. code-block:: shell
 
-        docker network create bdc-odc-net
+        $ docker network create bdc-odc-net
 
 
 Now, you will need an instance of PostgreSQL up and running in order to launch the ODC services. In the console, enter the following command to start the PostgreSQL instance:
 
 .. code-block:: shell
 
-        docker run -it -d \
+        $ docker run -it -d \
                 --name bdc-odc-pg \
                 --hostname bdc-odc-pg \
                 --network bdc-odc-net \
@@ -64,13 +64,13 @@ Now, you will need an instance of PostgreSQL up and running in order to launch t
                 -e POSTGRES_DB=opendatacube \
                 -e POSTGRES_PASSWORD=change-me \
                 -e POSTGRES_USER=opendatacube \
-                postgres:10
+                kartoza/postgis:11.0-2.5
 
 After that, you can initialize Open Data Cube instance with the following command:
 
 .. code-block:: shell
 
-        docker run -it -d \
+        $ docker run -it -d \
                 --name bdc-odc-core \
                 --hostname bdc-odc-core \
                 --network bdc-odc-net \
@@ -90,13 +90,13 @@ Run the following command in order to initialize the ODC database:
 
 .. code-block:: shell
 
-        docker exec -it bdc-odc-core datacube system init
+        $ docker exec -it bdc-odc-core datacube system init
 
 You can check if the ODC instance is ready with the following command:
 
 .. code-block:: shell
         
-        docker exec -it bdc-odc-core datacube product list
+        $ docker exec -it bdc-odc-core datacube product list
 
 
 Starting an ODC Jupyer Notebook Instance
@@ -106,7 +106,7 @@ To start an ODC Jupyter Notebook instance, use the following command:
 
 .. code-block:: shell
 
-        docker run -it -d \
+        $ docker run -it -d \
                 --name bdc-odc-jupyter \
                 --hostname bdc-odc-jupyter \
                 --network bdc-odc-net \
@@ -124,4 +124,34 @@ Run the following command to start the Jupyer Notebook service:
 
 .. code-block:: shell
 
-        docker exec -it bdc-odc-jupyter jupyter notebook --ip=0.0.0.0 --port=8889 --notebook-dir=/data
+        $ docker exec -it bdc-odc-jupyter jupyter notebook --ip=0.0.0.0 --port=8889 --notebook-dir=/data
+
+Starting an ODC WMS Instance
+-----------------------------
+
+To start an ODC WMS instance, use the following command:
+
+.. code-block:: shell
+        
+        $ git https://github.com/M3nin0/datacube-ows.git && cd datacube-ows
+
+Now, update the .env file with your database settings. After this, run the build script
+
+.. code-block:: shell
+
+        $ ./build.sh
+
+You will need to update the ODC ranges.
+
+.. code-block:: shell
+
+        $ docker exec -ti datacube-ows_ows_1 bash
+        $ cd /code
+        $ python3 update_ranges.py --schema  --role opendatacube
+        $ python3 update_ranges.py
+
+Use the URL below to test
+
+.. code-block::
+
+        http://127.0.0.1:8000/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&BBOX=-16.10877155100000024,-56.30364467999999789,-14.1582321009999994,-54.63602305900000289&CRS=EPSG:4326&WIDTH=229&HEIGHT=267&LAYERS=C4_64_16D_MED&STYLES=&FORMAT=image/png&DPI=96&MAP_RESOLUTION=96&FORMAT_OPTIONS=dpi:96&TRANSPARENT=TRUE
