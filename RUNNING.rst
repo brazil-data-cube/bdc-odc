@@ -133,7 +133,7 @@ To start an ODC WMS instance, use the following command:
 
 .. code-block:: shell
         
-        $ git https://github.com/M3nin0/datacube-ows.git && cd datacube-ows
+        $ git clone https://github.com/M3nin0/datacube-ows.git && cd datacube-ows
 
 Now, update the .env file with your database settings. After this, run the build script
 
