@@ -1,4 +1,4 @@
-FROM odc:1.7
+FROM local/odc:1.7
 
 
 USER root
