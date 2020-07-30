@@ -4,6 +4,8 @@ import osgeo
 from osgeo import osr
 from urllib.parse import urlparse
 
+from datetime import datetime
+
 
 def href_to_path(href, basepath):
     url = urlparse(href)
@@ -56,3 +58,15 @@ def convert_coords_xy(coords, in_spatial_ref, out_spatial_ref):
         return {'x': a[0], 'y': a[1]}
 
     return {key: transform(p) for key, p in coords.items()}
+
+
+def stacdate_to_odcdate(datepattern):
+    """Function to transform stac date pattern to ODC pattern
+    :param datepattern:
+    :return:
+    """
+    start_end = datepattern.split('-')[-2:]
+
+    return (
+        datetime.strptime(i, '%Y-%m-%d').strftime("%Y-%m-%d %H:%M:%S.%fZ") for i in start_end
+    )

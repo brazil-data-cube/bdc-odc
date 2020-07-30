@@ -2,7 +2,6 @@ import yaml
 from osgeo import osr
 from osgeo import gdal
 
-from datetime import datetime
 import stac2odc.utils as utils
 
 from collections import OrderedDict
@@ -48,13 +47,11 @@ def item2dataset(collection, constants):
             break
 
         for f in features:
-            datetime_object = datetime.strptime(
-                f['properties']['datetime'], '%Y-%m-%d')
-            datetime_str = datetime_object.strftime("%Y-%m-%d %H:%M:%S.%fZ")
+            _startdate, _enddate = utils.stacdate_to_odcdate(f['properties']['datetime'])
 
             feature = OrderedDict()
             feature['id'] = utils.generate_id(f)
-            feature['creation_dt'] = datetime_str
+            feature['creation_dt'] = _startdate  # (?)
             feature['product_type'] = product_type
             feature['platform'] = {'code': constants['plataform_code']}
             feature['instrument'] = {'name': collection['id']}
@@ -72,10 +69,10 @@ def item2dataset(collection, constants):
             feature['extent']['coord']['ll'] = {'lat': f['geometry']['coordinates'][0][3][0],
                                                 'lon': f['geometry']['coordinates'][0][3][1]}
 
-            #### :TODO: Change this
-            feature['extent']['from_dt'] = datetime_str
-            feature['extent']['center_dt'] = datetime_str
-            feature['extent']['to_dt'] = datetime_str
+            # :TODO: Change this
+            feature['extent']['from_dt'] = _startdate
+            feature['extent']['center_dt'] = _startdate  # (?)
+            feature['extent']['to_dt'] = _enddate
 
             # Extract image bbox
             first_band = next(iter(collection['properties']['bdc:bands']))
