@@ -21,7 +21,7 @@ def collection2product(collection, constants):
     odc_config['storage']['resolution']['x'] = int(
         collection['properties']['bdc:bands'][first_band]['resolution_x'])
     odc_config['storage']['resolution']['y'] = int(
-        collection['properties']['bdc:bands'][first_band]['resolution_y'])*-1
+        collection['properties']['bdc:bands'][first_band]['resolution_y']) * -1
 
     def measurements(data):
         m = OrderedDict()
@@ -34,7 +34,7 @@ def collection2product(collection, constants):
 
     odc_config['metadata'] = OrderedDict()
     odc_config['metadata']['platform'] = {'code': constants['platform_code']}
-    odc_config['metadata']['instrument'] = {'name': collection['id']}
+    odc_config['metadata']['instrument'] = {'name': constants['instrument_type']}
     odc_config['metadata']['product_type'] = product_type
     odc_config['metadata']['format'] = {'name': constants['format_name']}
     odc_config['measurements'] = [measurements(v)

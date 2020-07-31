@@ -65,8 +65,8 @@ def stacdate_to_odcdate(datepattern):
     :param datepattern:
     :return:
     """
-    start_end = datepattern.split('-')[-2:]
 
+    start_end = datepattern.split('_')[-2:]
     return (
         datetime.strptime(i, '%Y-%m-%d').strftime("%Y-%m-%d %H:%M:%S.%fZ") for i in start_end
     )

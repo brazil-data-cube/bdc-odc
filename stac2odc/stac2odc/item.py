@@ -4,7 +4,9 @@ from osgeo import gdal
 
 import stac2odc.utils as utils
 
+from datetime import datetime
 from collections import OrderedDict
+
 
 STAC_MAX_PAGE = 99999999
 
@@ -47,14 +49,14 @@ def item2dataset(collection, constants):
             break
 
         for f in features:
-            _startdate, _enddate = utils.stacdate_to_odcdate(f['properties']['datetime'])
+            _startdate, _enddate = utils.stacdate_to_odcdate(f['id'])
 
             feature = OrderedDict()
             feature['id'] = utils.generate_id(f)
-            feature['creation_dt'] = _startdate  # (?)
+            feature['creation_dt'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%fZ")
             feature['product_type'] = product_type
             feature['platform'] = {'code': constants['plataform_code']}
-            feature['instrument'] = {'name': collection['id']}
+            feature['instrument'] = {'name': constants['instrument_type']}
             feature['format'] = {'name': constants['format_name']}
             feature['lineage'] = {'source_datasets': {}}
 

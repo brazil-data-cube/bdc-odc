@@ -16,23 +16,23 @@ def cli():
 
 @cli.command(name = "item2dataset", help = "Function to convert a STAC Collection JSON to ODC Dataset YAML")
 @click.option('-c', '--collection', required=True, help='Collection name (Ex. C4_64_16D_MED).')
-@click.option('-t', '--type', default='eo', help='Metadata type.')
-@click.option('-p', '--code', default='BDC', help='Plataform code.')
+@click.option('-i', '--instrument', help='Instrument type.', required=True)
+@click.option('-p', '--code', help='Plataform code.', required=True)
 @click.option('-f', '--format', default='GeoTiff', help='Format name.')
 @click.option('--units', default='1', help='Units.')
 @click.option('--url', default='http://brazildatacube.dpi.inpe.br/bdc-stac/0.8.0/', help='BDC STAC url.')
 @click.option('--basepath', default='/gfs', help='Repository base path')
 @click.option('-o', '--outpath', default='./', help='Output path')
-@click.option('-i', '--ignore', default=['quality'], help='List of bands to ignore')
-@click.option('-m', '--max_items', default=None, help='Max items')
-def item2dataset_cli(collection, type, code, format, units, url, basepath, outpath, ignore, max_items):
+@click.option('-q', '--quality-ignore', default=['quality'], help='List of bands to ignore')
+@click.option('-m', '--max-items', default=None, help='Max items')
+def item2dataset_cli(collection, instrument, code, format, units, url, basepath, outpath, quality_ignore, max_items):
     constants = {
-        'metadata_type': type,
+        'instrument_type': instrument,
         'plataform_code': code,
         'format_name': format,
         'units': units,
         'basepath': basepath,
-        'ignore': ignore,
+        'ignore': quality_ignore,
         'outpath': outpath,
         'max_items': int(max_items)
     }
@@ -43,20 +43,22 @@ def item2dataset_cli(collection, type, code, format, units, url, basepath, outpa
 
 @cli.command(name = "collection2product", help = "Function to convert a STAC Collection JSON to ODC Product YAML")
 @click.option('-c', '--collection', required=True, help='Collection name (Ex. C4_64_16D_MED).')
-@click.option('-t', '--type', default='eo', help='Metadata type.')
-@click.option('-p', '--code', default='BDC', help='Platform code.')
+@click.option('-i', '--instrument', help='Instrument type.', required=True)
+@click.option('-t', '--type', help='Metadata type.', required = True)
+@click.option('-p', '--code', help='Platform code.', required = True)
 @click.option('-f', '--format', default='GeoTiff', help='Format name.')
 @click.option('--units', default='1', help='Units.')
 @click.option('--url', default='http://brazildatacube.dpi.inpe.br/bdc-stac/0.8.0/', help='BDC STAC url.')
 @click.option('-o', '--outfile', default=None, help='Output file')
-@click.option('-i', '--ignore', default=['quality'], help='List of bands to ignore')
-def collection2product_cli(collection, type, code, format, units, url, outfile, ignore):
+@click.option('-q', '--quality-ignore', default=['quality'], help='List of bands to ignore')
+def collection2product_cli(collection, instrument, type, code, format, units, url, outfile, quality_ignore):
     constants = {
+        'instrument_type': instrument,
         'metadata_type': type,
         'platform_code': code,
         'format_name': format,
         'units': units,
-        'ignore': ignore
+        'ignore': quality_ignore
     }
     s = stac.STAC(url, True)
     c = s.collection(collection)
