@@ -1,4 +1,4 @@
-# STAC2ODC <img src="image/stac2odc.jpg" width="120" align="right" />
+# STAC2ODC <img src="image/stac2odc.jpg" width="180" align="right" />
 
 Tool to facilitate the indexing of STAC data in the Open Data Cube environment.
 
