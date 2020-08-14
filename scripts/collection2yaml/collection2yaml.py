@@ -57,7 +57,7 @@ def convert_bdc_collection(collection, constants):
     odc_config['metadata']['instrument'] = {'name': collection['id']}
     odc_config['metadata']['product_type'] = product_type
     odc_config['metadata']['format'] = {'name': constants['format_name']}
-    odc_config['measurements'] = [measurements(v)
+    odc_config['measurements'] = [measurements(k, v)
                                   for k, v in collection['properties']['bdc:bands'].items() if k not in constants['ignore']]
     return odc_config  # default_flow_style=None
 
