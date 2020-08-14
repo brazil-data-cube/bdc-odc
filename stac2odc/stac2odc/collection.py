@@ -23,9 +23,9 @@ def collection2product(collection, constants):
     odc_config['storage']['resolution']['y'] = int(
         collection['properties']['bdc:bands'][first_band]['resolution_y']) * -1
 
-    def measurements(data):
+    def measurements(tag, data):
         m = OrderedDict()
-        m['name'] = data['name']
+        m['name'] = tag # data['name']
         m['aliases'] = [data['name'], ]
         m['dtype'] = data['data_type'].lower()
         m['nodata'] = data['fill']
@@ -37,6 +37,6 @@ def collection2product(collection, constants):
     odc_config['metadata']['instrument'] = {'name': constants['instrument_type']}
     odc_config['metadata']['product_type'] = product_type
     odc_config['metadata']['format'] = {'name': constants['format_name']}
-    odc_config['measurements'] = [measurements(v)
+    odc_config['measurements'] = [measurements(k, v)
                                   for k, v in collection['properties']['bdc:bands'].items() if k not in constants['ignore']]
     return odc_config  # default_flow_style=None
