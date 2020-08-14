@@ -15,7 +15,7 @@ def cli():
 
 
 @cli.command(name = "item2dataset", help = "Function to convert a STAC Collection JSON to ODC Dataset YAML")
-@click.option('-c', '--collection', required=True, help='Collection name (Ex. C4_64_16D_MED).')
+@click.option('-c', '--collection', required=True, help='Collection name (Ex. CB4MOSBR_64_3M_STK).')
 @click.option('-i', '--instrument', help='Instrument type.', required=True)
 @click.option('-p', '--code', help='Plataform code.', required=True)
 @click.option('-f', '--format', default='GeoTiff', help='Format name.')
@@ -42,13 +42,13 @@ def item2dataset_cli(collection, instrument, code, format, units, url, basepath,
 
 
 @cli.command(name = "collection2product", help = "Function to convert a STAC Collection JSON to ODC Product YAML")
-@click.option('-c', '--collection', required=True, help='Collection name (Ex. C4_64_16D_MED).')
+@click.option('-c', '--collection', required=True, help='Collection name (Ex. CB4MOSBR_64_3M_STK).')
 @click.option('-i', '--instrument', help='Instrument type.', required=True)
 @click.option('-t', '--type', help='Metadata type.', required = True)
 @click.option('-p', '--code', help='Platform code.', required = True)
-@click.option('-f', '--format', default='GeoTiff', help='Format name.')
+@click.option('-f', '--format', default='GeoTiff', help='Format name')
 @click.option('--units', default='1', help='Units.')
-@click.option('--url', default='http://brazildatacube.dpi.inpe.br/bdc-stac/0.8.0/', help='BDC STAC url.')
+@click.option('--url', default='http://brazildatacube.dpi.inpe.br/bdc-stac/0.8.0/', help='BDC STAC url')
 @click.option('-o', '--outfile', default=None, help='Output file')
 @click.option('-q', '--quality-ignore', default=['quality'], help='List of bands to ignore')
 def collection2product_cli(collection, instrument, type, code, format, units, url, outfile, quality_ignore):
