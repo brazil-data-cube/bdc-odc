@@ -105,12 +105,10 @@ ows_cfg = {
                 "horizontal_coord": "x",
                 "vertical_coord": "y",
             },
-            "EPSG:10001": {
+            "+proj=aea +lat_0=-12 +lon_0=-54 +lat_1=-2 +lat_2=-22 +x_0=5000000 +y_0=10000000 +ellps=GRS80 +units=m +no_defs": {
                 "geographic": False,
                 "horizontal_coord": "x",
-                "vertical_coord": "y",
-                "customCRS": True,
-                "customDefinition": '+proj=aea +lat_0=-12 +lon_0=-54 +lat_1=-2 +lat_2=-22 +x_0=5000000 +y_0=10000000 +ellps=GRS80 +units=m +no_defs'
+                "vertical_coord": "y"
             }
         },
         # XXX: CHANGE ME
@@ -197,10 +195,10 @@ ows_cfg = {
                 {
                     "title": "Landsat-8",
                     # TODO: UPDATE ABSTRACT
-                    "abstract": "CBERS COLLECTIONS (TEST VERSION)",
+                    "abstract": "LANDSAT COLLECTIONS (TEST VERSION)",
                     "layers": [
                         {
-                            "title": "LANDSAT-8 UNICA IMAGEM",
+                            "title": "LANDSAT-8",
                             "name": "ls8_level1_usgs",
                             # TODO: UPDATE ABSTRACT
                             "abstract": "AN ANOTHER ABSTRACT FOR LANDSAT COLLECTIONS",
@@ -214,7 +212,7 @@ ows_cfg = {
                                 "apply_solar_corrections": False,
                             },
                             "wcs": {
-                                "native_crs": "EPSG:10001",
+                                "native_crs": "EPSG:32623",
                                 "native_resolution": [25.0, 25.0],
                                 "native_wcs_format": "GeoTIFF",
                                 "default_bands": ["red", "green", "blue"]
@@ -249,7 +247,7 @@ ows_cfg = {
                             "apply_solar_corrections": False,
                         },
                         "wcs": {
-                            "native_crs": "EPSG:10001",
+                            "native_crs": "+proj=aea +lat_0=-12 +lon_0=-54 +lat_1=-2 +lat_2=-22 +x_0=5000000 +y_0=10000000 +ellps=GRS80 +units=m +no_defs",
                             "native_resolution": [64, -64],
                             "default_bands": ["red", "green", "blue"]
                         },
