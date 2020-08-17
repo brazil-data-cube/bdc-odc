@@ -7,7 +7,7 @@ from osgeo import osr
 from osgeo import gdal
 import uuid
 from datetime import datetime
-
+import re
 import osgeo
 
 # Fontes:
@@ -84,6 +84,8 @@ def convert_coords_xy(coords, in_spatial_ref, out_spatial_ref):
 
 def convert_bdc_item(collection, constants):
     crs_proj4 = collection['properties']['bdc:crs']
+    # Removing the + datum field while the BDC-STAC crs information is not corrected
+    crs_proj4 = re.sub('\+datum=(\S)*\s', '', crs_proj4)
     sr = osr.SpatialReference()
     sr.ImportFromProj4(crs_proj4)
     crs_wkt = sr.ExportToWkt()
