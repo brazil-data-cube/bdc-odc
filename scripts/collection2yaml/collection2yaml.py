@@ -35,7 +35,11 @@ def convert_bdc_collection(collection, constants):
     odc_config['metadata_type'] = constants['metadata_type']
 
     odc_config['storage'] = OrderedDict()
-    odc_config['storage']['crs'] = collection['properties']['bdc:crs']
+    
+    # remove +datum in some cases
+    crs_proj4 = re.sub('\+datum=(\S)*\s', '', collection['properties']['bdc:crs'])
+    odc_config['storage']['crs'] = crs_proj4
+    
     odc_config['storage']['resolution'] = OrderedDict()
     first_band = next(iter(collection['properties']['bdc:bands']))
     odc_config['storage']['resolution']['x'] = int(
