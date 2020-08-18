@@ -23,18 +23,20 @@ def cli():
 @click.option('--url', default='http://brazildatacube.dpi.inpe.br/bdc-stac/0.8.0/', help='BDC STAC url.')
 @click.option('--basepath', default='/gfs', help='Repository base path')
 @click.option('-o', '--outpath', default='./', help='Output path')
-@click.option('-q', '--quality-ignore', default=['quality'], help='List of bands to ignore')
+@click.option('-i', '--ignore', default=['quality'], help='List of bands to ignore')
 @click.option('-m', '--max-items', default=None, help='Max items')
-def item2dataset_cli(collection, instrument, code, format, units, url, basepath, outpath, quality_ignore, max_items):
+@click.option('-pc', '--pre-collection', default=False, help="Defines whether the collection belongs to the pre-collection")
+def item2dataset_cli(collection, instrument, code, format, units, url, basepath, outpath, ignore, max_items, is_pre_collection):
     constants = {
         'instrument_type': instrument,
         'plataform_code': code,
         'format_name': format,
         'units': units,
         'basepath': basepath,
-        'ignore': quality_ignore,
+        'ignore': ignore,
         'outpath': outpath,
-        'max_items': int(max_items)
+        'max_items': int(max_items),
+        "is_pre_collection": is_pre_collection
     }
     s = stac.STAC(url, True)
     c = s.collection(collection)
@@ -50,16 +52,19 @@ def item2dataset_cli(collection, instrument, code, format, units, url, basepath,
 @click.option('--units', default='1', help='Units.')
 @click.option('--url', default='http://brazildatacube.dpi.inpe.br/bdc-stac/0.8.0/', help='BDC STAC url')
 @click.option('-o', '--outfile', default=None, help='Output file')
-@click.option('-q', '--quality-ignore', default=['quality'], help='List of bands to ignore')
-def collection2product_cli(collection, instrument, type, code, format, units, url, outfile, quality_ignore):
+@click.option('-i', '--ignore', default=['quality'], help='List of bands to ignore')
+@click.option('-pc', '--pre-collection', default=False, help="Defines whether the collection belongs to the pre-collection")
+def collection2product_cli(collection, instrument, type, code, format, units, url, outfile, ignore, is_pre_collection):
     constants = {
         'instrument_type': instrument,
         'metadata_type': type,
         'platform_code': code,
         'format_name': format,
         'units': units,
-        'ignore': quality_ignore
+        'ignore': ignore,
+        "is_pre_collection": is_pre_collection
     }
+    
     s = stac.STAC(url, True)
     c = s.collection(collection)
     yaml_content = stac2odc.collection.collection2product(c, constants)

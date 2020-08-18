@@ -70,3 +70,11 @@ def stacdate_to_odcdate(datepattern):
     return (
         datetime.strptime(i, '%Y-%m-%d').strftime("%Y-%m-%d %H:%M:%S.%fZ") for i in start_end
     )
+
+
+def fix_precollection_crs(crs):
+    """Function to fix duplicated datum and ellipsoid in proj string of 
+    bdc pre-collection datasets
+    """
+    import re
+    return re.sub('\+datum=(\S)*\s', '', crs)
