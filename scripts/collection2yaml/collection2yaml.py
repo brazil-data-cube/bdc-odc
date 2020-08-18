@@ -43,9 +43,9 @@ def convert_bdc_collection(collection, constants):
     odc_config['storage']['resolution']['y'] = int(
         collection['properties']['bdc:bands'][first_band]['resolution_y'])*-1
 
-    def measurements(data):
+    def measurements(tag, data):
         m = OrderedDict()
-        m['name'] = data['name']
+        m['name'] = tag # data['name']
         m['aliases'] = [data['name'], ]
         m['dtype'] = data['data_type'].lower()
         m['nodata'] = data['fill']
