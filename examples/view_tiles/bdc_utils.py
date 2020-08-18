@@ -7,16 +7,13 @@ from datacube.api.core import get_bounds
 from ipywidgets import Layout
 
 
-# %load_ext autoreload
-# %autoreload 2
-
 def bdc_plot_datasets(datasets, zoom = 4, layout=Layout(width='600px', height='600px')):
+    """Plot Dataset tiles
+    """
     
     bbox = get_bounds(datasets, datasets[0].crs)
     bbox_pol = shapely.wkt.loads(bbox.wkt)
-    # bbox_pol.crs = {'init': 'epsg:{}'.format(datasets[0].crs.epsg)}
-    # bbox_pol.crs = {'init': 'epsg:4674'}
-    
+
     project = partial(
         pyproj.transform,
         pyproj.Proj(datasets[0].crs.crs_str),
