@@ -26,7 +26,7 @@ def cli():
 @click.option('-i', '--ignore', default=['quality'], help='List of bands to ignore')
 @click.option('-m', '--max-items', default=None, help='Max items')
 @click.option('-pc', '--pre-collection', default=False, help="Defines whether the collection belongs to the pre-collection")
-def item2dataset_cli(collection, instrument, code, format, units, url, basepath, outpath, ignore, max_items, is_pre_collection):
+def item2dataset_cli(collection, instrument, code, format, units, url, basepath, outpath, ignore, max_items, pre_collection):
     constants = {
         'instrument_type': instrument,
         'plataform_code': code,
@@ -36,7 +36,7 @@ def item2dataset_cli(collection, instrument, code, format, units, url, basepath,
         'ignore': ignore,
         'outpath': outpath,
         'max_items': int(max_items),
-        "is_pre_collection": is_pre_collection
+        "is_pre_collection": pre_collection
     }
     s = stac.STAC(url, True)
     c = s.collection(collection)
@@ -54,7 +54,7 @@ def item2dataset_cli(collection, instrument, code, format, units, url, basepath,
 @click.option('-o', '--outfile', default=None, help='Output file')
 @click.option('-i', '--ignore', default=['quality'], help='List of bands to ignore')
 @click.option('-pc', '--pre-collection', default=False, help="Defines whether the collection belongs to the pre-collection")
-def collection2product_cli(collection, instrument, type, code, format, units, url, outfile, ignore, is_pre_collection):
+def collection2product_cli(collection, instrument, type, code, format, units, url, outfile, ignore, pre_collection):
     constants = {
         'instrument_type': instrument,
         'metadata_type': type,
@@ -62,7 +62,7 @@ def collection2product_cli(collection, instrument, type, code, format, units, ur
         'format_name': format,
         'units': units,
         'ignore': ignore,
-        "is_pre_collection": is_pre_collection
+        "is_pre_collection": pre_collection
     }
     
     s = stac.STAC(url, True)
