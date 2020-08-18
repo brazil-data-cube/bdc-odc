@@ -25,8 +25,9 @@ At the ODC terminal, run the following commands to download and install as requi
 
 .. code-block:: shell
 
-    $ git clone https://github.com/vconrado/bdc-odc.git
-    $ pip install -r bdc-odc/scripts/collection2yaml/requirements.txt
+    $ git clone https://github.com/brazil-data-cube/bdc-odc.git
+    $ cd bdc-odc/stac2odc
+    $ python3 setup.py install
 
 The following steps are required for registration of a `Product` and indexing the `Datasets`:
     * Extract Product metadata
@@ -42,20 +43,20 @@ Initially, we will create a folder where the metadata will be saved:
 
 .. code-block:: shell
 
-    $ mkdir -p ~/products/C4_64_16D_MED/datasets
+    $ mkdir -p ~/products/CB4_64_16D_STK_v1/datasets
 
 We provided a script for extracting the metadata from a `Collection` of BDC STAC to the format of an ODC `Product`.
-To produce the methods for the `C4_64_16D_MED` `Collection`, use the following command:
+To produce the methods for the `CB4_64_16D_STK_v1` `Collection`, use the following command:
 
 .. code-block:: shell
 
-    $ python3 bdc-odc/scripts/collection2yaml/collection2yaml.py -c C4_64_16D_MED -o ~/products/C4_64_16D_MED/C4_64_16D_MED.yaml
+    $ stac2odc collection2product -c CB4_64_16D_STK_v1 -o ~/products/CB4_64_16D_STK_v1/CB4_64_16D_STK_v1.yaml --units m -p CBERS4 --instrument AWFI --type eo
 
 You can see the created file with the following command:
 
 .. code-block:: shell
 
-    $ cat ~/products/C4_64_16D_MED/C4_64_16D_MED.yaml
+    $ cat ~/products/CB4_64_16D_STK_v1/CB4_64_16D_STK_v1.yaml
 
 Add Product to ODC database
 ---------------------------
@@ -64,21 +65,20 @@ To register the new `Product` in the ODC database, use the following command:
 
 .. code-block:: shell
 
-    $ datacube product add ~/products/C4_64_16D_MED/C4_64_16D_MED.yaml
+    $ datacube product add ~/products/CB4_64_16D_STK_v1/CB4_64_16D_STK_v1.yaml
 
 
 Extract Datasets metadata
 --------------------------
 
 We also provided a script for extracting the metadata from `Items` of a `Collection` of BDC STAC to the format of an ODC `Dataset`.
-To create the metadata files from `C4_64_16D_MED` `Collection` use the following command:
+To create the metadata files from `CB4_64_16D_STK_v1` `Collection` use the following command:
 
 .. code-block:: shell
 
-    $ python3 bdc-odc/scripts/item2dataset/item2dataset.py -c C4_64_16D_MED -o ~/products/C4_64_16D_MED/datasets/
+    $ stac2odc item2dataset -c CB4_64_16D_STK_v1 -o ~/products/CB4_64_16D_STK_v1/datasets/ --units m -p CBERS4 --instrument AWFI -m 5
 
-For each `Item` in the `Collection`, a YAML file will be created with the metadata to be inserted as a `Dataset` in the ODC.
-
+For each `Item` in the `Collection`, a YAML file will be created with the metadata to be inserted as a `Dataset` in the ODC. 5 elements will be converted
 
 Add Dataset to ODC database 
 ---------------------------
@@ -87,13 +87,13 @@ To register one `Dataset` in the ODC database, use the following command:
 
 .. code-block:: shell
 
-    datacube -v dataset add -p C4_64_16D_MED ~/products/C4_64_16D_MED/datasets/C4_64_16D_MED_083100_2016-09-13_2016-09-28.yaml
+    $ datacube -v dataset add -p CB4_64_16D_STK_v1 ~/products/CB4_64_16D_STK_v1/datasets/CB4_64_16D_STK_v1_020024_2020-07-11_2020-07-26.yaml
 
 You can automate the indexing of `Datasets` using the following command:
 
 .. code-block:: shell
 
-    find ~/products/C4_64_16D_MED/datasets/*.yaml -exec datacube -vvv dataset add -p C4_64_16D_MED {} \;
+    $ find ~/products/CB4_64_16D_STK_v1/datasets/*.yaml -exec datacube -vvv dataset add -p CB4_64_16D_STK_v1 {} \;
 
 
 Script for Product registration and Datasets indexing
@@ -103,4 +103,4 @@ We also provide a script to facilitate the process of extracting metadata and re
 
 .. code-block:: shell
 
-    $ ./bdc-odc/scripts/index_collection.sh C4_64_16D_MED ~/products
+    $ bdc-odc/stac2odc/index_collection.sh CB4_64_16D_STK_v1 ~/products m CBERS4 AWFI 500

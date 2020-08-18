@@ -14,7 +14,7 @@ On the command line use the `git clone` command to clone the software repository
 
 .. code-block:: shell
 
-        $ git clone https://github.com/vconrado/bdc-odc.git
+        $ git clone https://github.com/brazil-data-cube/bdc-odc.git
 
 Then, go to the source code folder:
 
@@ -99,8 +99,8 @@ You can check if the ODC instance is ready with the following command:
         $ docker exec -it bdc-odc-core datacube product list
 
 
-Starting an ODC Jupyer Notebook Instance
-----------------------------------------
+Starting an ODC Jupyter Notebook Instance
+------------------------------------------
 
 To start an ODC Jupyter Notebook instance, use the following command:
 
@@ -126,16 +126,16 @@ Run the following command to start the Jupyer Notebook service:
 
         $ docker exec -it bdc-odc-jupyter jupyter notebook --ip=0.0.0.0 --port=8889 --notebook-dir=/data
 
-Starting an ODC WMS Instance
------------------------------
+Starting an BDC-ODC OWS Instance
+---------------------------------
 
 To start an ODC WMS instance, use the following command:
 
 .. code-block:: shell
         
-        $ git clone https://github.com/M3nin0/datacube-ows.git && cd datacube-ows
+        $ git clone https://github.com/brazil-data-cube/datacube-ows && cd datacube-ows
 
-Now, update the .env file with your database settings. After this, run the build script
+Now, update the .env file with your database settings. If necessary, get ows config files (OWS_CFG_FILE) in  `bdc-odc <https://github.com/brazil-data-cube/bdc-odc>`_. After this, run the build script
 
 .. code-block:: shell
 
@@ -154,4 +154,30 @@ Use the URL below to test
 
 .. code-block::
 
-        http://127.0.0.1:8000/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&BBOX=-16.10877155100000024,-56.30364467999999789,-14.1582321009999994,-54.63602305900000289&CRS=EPSG:4326&WIDTH=229&HEIGHT=267&LAYERS=C4_64_16D_MED&STYLES=&FORMAT=image/png&DPI=96&MAP_RESOLUTION=96&FORMAT_OPTIONS=dpi:96&TRANSPARENT=TRUE
+        http://127.0.0.1:8000/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&BBOX=-16.10877155100000024,-56.30364467999999789,-14.1582321009999994,-54.63602305900000289&CRS=EPSG:4326&WIDTH=229&HEIGHT=267&LAYERS=CB4_64_16D_STK_v1&STYLES=&FORMAT=image/png&DPI=96&MAP_RESOLUTION=96&FORMAT_OPTIONS=dpi:96&TRANSPARENT=TRUE
+
+
+Starting an ODC Explorer Instance
+----------------------------------
+
+First download the code
+
+To start an ODC WMS instance, use the following command:
+
+.. code-block:: shell
+        
+        $ git clone https://github.com/brazil-data-cube/datacube-explorer && cd datacube-explorer
+
+Inside the directory, modify the docker-compose settings, if necessary, and then run the build script
+
+.. code-block:: shell
+
+        $ ./build.sh
+
+Now just access the container and update the datasets locations
+
+.. code-block:: shell
+
+        $ cubedash-gen --init --all
+
+At the end of the process, go to address http://127.0.0.1:5000 and enjoy!
