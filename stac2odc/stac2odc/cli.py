@@ -24,7 +24,7 @@ def cli():
 @click.option('--basepath', default='/gfs', help='Repository base path')
 @click.option('-o', '--outpath', default='./', help='Output path')
 @click.option('--ignore', default=['quality'], help='List of bands to ignore')
-@click.option('-m', '--max-items', default=None, help='Max items')
+@click.option('-m', '--max-items', default=None, help='Max items', required=True)
 @click.option('--pre-collection', default=False, help="Defines whether the collection belongs to the pre-collection")
 def item2dataset_cli(collection, instrument, code, format, units, url, basepath, outpath, ignore, max_items, pre_collection):
     constants = {
