@@ -23,9 +23,9 @@ def cli():
 @click.option('--url', default='http://brazildatacube.dpi.inpe.br/bdc-stac/0.8.0/', help='BDC STAC url.')
 @click.option('--basepath', default='/gfs', help='Repository base path')
 @click.option('-o', '--outpath', default='./', help='Output path')
-@click.option('-i', '--ignore', default=['quality'], help='List of bands to ignore')
+@click.option('--ignore', default=['quality'], help='List of bands to ignore')
 @click.option('-m', '--max-items', default=None, help='Max items')
-@click.option('-pc', '--pre-collection', default=False, help="Defines whether the collection belongs to the pre-collection")
+@click.option('--pre-collection', default=False, help="Defines whether the collection belongs to the pre-collection")
 def item2dataset_cli(collection, instrument, code, format, units, url, basepath, outpath, ignore, max_items, pre_collection):
     constants = {
         'instrument_type': instrument,
@@ -52,8 +52,8 @@ def item2dataset_cli(collection, instrument, code, format, units, url, basepath,
 @click.option('--units', default='1', help='Units.')
 @click.option('--url', default='http://brazildatacube.dpi.inpe.br/bdc-stac/0.8.0/', help='BDC STAC url')
 @click.option('-o', '--outfile', default=None, help='Output file')
-@click.option('-i', '--ignore', default=['quality'], help='List of bands to ignore')
-@click.option('-pc', '--pre-collection', default=False, help="Defines whether the collection belongs to the pre-collection")
+@click.option('--ignore', default=['quality'], help='List of bands to ignore')
+@click.option('--pre-collection', default=False, help="Defines whether the collection belongs to the pre-collection")
 def collection2product_cli(collection, instrument, type, code, format, units, url, outfile, ignore, pre_collection):
     constants = {
         'instrument_type': instrument,
