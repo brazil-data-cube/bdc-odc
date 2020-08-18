@@ -109,6 +109,16 @@ ows_cfg = {
                 "geographic": False,
                 "horizontal_coord": "x",
                 "vertical_coord": "y"
+            },
+            "+proj=aea +lat_1=-1 +lat_2=-29 +lat_0=0 +lon_0=-54 +x_0=0 +y_0=0 +ellps=GRS80 +units=m +no_defs +type=crs": {
+                "geographic": False,
+                "horizontal_coord": "x",
+                "vertical_coord": "y"
+            },
+            "+proj=aea +lat_1=-1 +lat_2=-29 +lat_0=0 +lon_0=-54 +x_0=0 +y_0=0 +ellps=GRS80 +units=m +no_defs": {
+                "geographic": False,
+                "horizontal_coord": "x",
+                "vertical_coord": "y"
             }
         },
         # XXX: CHANGE ME
@@ -162,7 +172,7 @@ ows_cfg = {
     "wcs": {
         # Config for WCS service, for all products/coverages
         "default_geographic_CRS": "EPSG:4326",
-        # "native_wcs_format": "GeoTIFF", # (?)
+        # "native_wcs_format": "GeoTIFF",
         "formats": {
             "GeoTIFF": {
                 # "renderer": "datacube_ows.wcs_utils.get_tiff",
@@ -192,51 +202,15 @@ ows_cfg = {
             "title": "Brazil Data Cube - OGC Web Services",
             "abstract": "Brazil Data Cube OGC Web Services",
             "layers": [
-                {
-                    "title": "Landsat-8",
-                    # TODO: UPDATE ABSTRACT
-                    "abstract": "LANDSAT COLLECTIONS (TEST VERSION)",
-                    "layers": [
-                        {
-                            "title": "LANDSAT-8",
-                            "name": "ls8_level1_usgs",
-                            # TODO: UPDATE ABSTRACT
-                            "abstract": "AN ANOTHER ABSTRACT FOR LANDSAT COLLECTIONS",
-                            "product_name": "ls8_level1_usgs",
-                            "bands": bands_ls,
-                            "resource_limits": reslim_landsat,
-                            "image_processing": {
-                                "extent_mask_func": "datacube_ows.ogc_utils.mask_by_val",
-                                "always_fetch_bands": [],
-                                "manual_merge": True,
-                                "apply_solar_corrections": False,
-                            },
-                            "wcs": {
-                                "native_crs": "EPSG:32623",
-                                "native_resolution": [25.0, 25.0],
-                                "native_wcs_format": "GeoTIFF",
-                                "default_bands": ["red", "green", "blue"]
-                            },
-                            "styling": {
-                                "default_style": "simple_rgb",
-                                "styles": [
-                                    style_cbers_simple_rgb
-                                ]
-                            }
-                        }
-                    ]
-                },
                 # Hierarchical list of layers.  May be a combination of unnamed/unmappable folder-layers or named mappable layers.
                 {
                     "title": "CBERS-4",
-                    # TODO: UPDATE ABSTRACT
-                    "abstract": "CBERS COLLECTIONS (TEST VERSION)",
+                    "abstract": "CBERS4 COLLECTION",
                     "layers": [
                     {
                         "title": "CBERS-4 16 days",
                         "name": "CB4_64_16D_STK_v1",
-                        # TODO: UPDATE ABSTRACT
-                        "abstract": "AN ANOTHER ABSTRACT FOR CBERS COLLECTIONS",
+                        "abstract": "CBERS4 16 Days Collection",
                         "product_name": "CB4_64_16D_STK_v1",
                         "bands": bands_cbers,
                         "resource_limits": reslim_cbers,
