@@ -19,6 +19,9 @@ def item2dataset(collection, constants):
     """
 
     crs_proj4 = collection['properties']['bdc:crs']
+    if constants['is_pre_collection']:
+        crs_proj4 = utils.fix_precollection_crs(crs_proj4)
+
     sr = osr.SpatialReference()
     sr.ImportFromProj4(crs_proj4)
     crs_wkt = sr.ExportToWkt()
@@ -27,7 +30,7 @@ def item2dataset(collection, constants):
     out_spatial_ref.ImportFromProj4(crs_proj4)
 
     in_spatial_ref = osr.SpatialReference()
-    in_spatial_ref.ImportFromEPSG(4326)  # (?)
+    in_spatial_ref.ImportFromEPSG(4326)
     product_type = utils.generate_product_type(collection)
 
     limit = 120
@@ -62,18 +65,17 @@ def item2dataset(collection, constants):
 
             feature['extent'] = OrderedDict()
             feature['extent']['coord'] = OrderedDict()
-            feature['extent']['coord']['ul'] = {'lat': f['geometry']['coordinates'][0][0][0],
-                                                'lon': f['geometry']['coordinates'][0][0][1]}
-            feature['extent']['coord']['ur'] = {'lat': f['geometry']['coordinates'][0][1][0],
-                                                'lon': f['geometry']['coordinates'][0][1][1]}
-            feature['extent']['coord']['lr'] = {'lat': f['geometry']['coordinates'][0][2][0],
-                                                'lon': f['geometry']['coordinates'][0][2][1]}
-            feature['extent']['coord']['ll'] = {'lat': f['geometry']['coordinates'][0][3][0],
-                                                'lon': f['geometry']['coordinates'][0][3][1]}
+            feature['extent']['coord']['ul'] = {'lon': f['geometry']['coordinates'][0][0][0],
+                                                'lat': f['geometry']['coordinates'][0][0][1]}
+            feature['extent']['coord']['ur'] = {'lon': f['geometry']['coordinates'][0][1][0],
+                                                'lat': f['geometry']['coordinates'][0][1][1]}
+            feature['extent']['coord']['lr'] = {'lon': f['geometry']['coordinates'][0][2][0],
+                                                'lat': f['geometry']['coordinates'][0][2][1]}
+            feature['extent']['coord']['ll'] = {'lon': f['geometry']['coordinates'][0][3][0],
+                                                'lat': f['geometry']['coordinates'][0][3][1]}
 
-            # :TODO: Change this
             feature['extent']['from_dt'] = _startdate
-            feature['extent']['center_dt'] = _startdate  # (?)
+            feature['extent']['center_dt'] = _startdate  # ToDo: Verify this
             feature['extent']['to_dt'] = _enddate
 
             # Extract image bbox

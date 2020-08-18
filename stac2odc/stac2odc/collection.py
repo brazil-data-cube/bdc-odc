@@ -7,6 +7,10 @@ def collection2product(collection, constants):
     """Function to convert a STAC Collection JSON to ODC Product YAML
     """
 
+    crs_proj4 = collection['properties']['bdc:crs']
+    if constants['is_pre_collection']:
+        crs_proj4 = utils.fix_precollection_crs(crs_proj4)
+
     product_type = utils.generate_product_type(collection)
 
     odc_config = OrderedDict()
@@ -15,7 +19,7 @@ def collection2product(collection, constants):
     odc_config['metadata_type'] = constants['metadata_type']
 
     odc_config['storage'] = OrderedDict()
-    odc_config['storage']['crs'] = collection['properties']['bdc:crs']
+    odc_config['storage']['crs'] = crs_proj4
     odc_config['storage']['resolution'] = OrderedDict()
     first_band = next(iter(collection['properties']['bdc:bands']))
     odc_config['storage']['resolution']['x'] = int(
