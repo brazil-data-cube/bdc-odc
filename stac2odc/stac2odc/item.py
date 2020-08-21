@@ -7,8 +7,11 @@ import stac2odc.utils as utils
 from datetime import datetime
 from collections import OrderedDict
 
+from loguru import logger
+
 
 STAC_MAX_PAGE = 99999999
+STAC_ITEM_PER_PAGE = 120
 
 
 def item2dataset(collection, constants):
@@ -17,6 +20,9 @@ def item2dataset(collection, constants):
     :param constants:
     :return:
     """
+
+    if constants['verbose']:
+        logger.info("item2dataset is running!")
 
     crs_proj4 = collection['properties']['bdc:crs']
     if constants['is_pre_collection']:
@@ -33,10 +39,13 @@ def item2dataset(collection, constants):
     in_spatial_ref.ImportFromEPSG(4326)
     product_type = utils.generate_product_type(collection)
 
-    limit = 120
     total_items = 0
+    limit = STAC_ITEM_PER_PAGE
     max_items = constants['max_items']
 
+    if constants['verbose']:
+        logger.info("Collecting information from STAC...")
+    
     for page in range(1, STAC_MAX_PAGE + 1):
         if max_items is not None:
             if max_items == total_items:
@@ -53,9 +62,13 @@ def item2dataset(collection, constants):
 
         for f in features:
             _startdate, _enddate = utils.stacdate_to_odcdate(f['id'])
+            _featureid = utils.generate_id(f)
 
+            if constants['verbose']:
+                logger.info(f"New item found: {_featureid}")
+            
             feature = OrderedDict()
-            feature['id'] = utils.generate_id(f)
+            feature['id'] = _featureid
             feature['creation_dt'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%fZ")
             feature['product_type'] = product_type
             feature['platform'] = {'code': constants['plataform_code']}
@@ -113,9 +126,12 @@ def item2dataset(collection, constants):
                         feature['image']['bands'][band]['layer'] = 1
                         band_counter += 1
                     else:
-                        print("Band '{}' was not found in asset '{}'".format(
+                        logger.info("Band '{}' was not found in asset '{}'".format(
                             band, f['id']))
             file_name = "{}{}.yaml".format(constants['outpath'], f['id'])
             with open(file_name, 'w') as f:
                 yaml.dump(feature, f)
             total_items += 1
+
+    if constants['verbose']:
+        logger.info("Finished!")

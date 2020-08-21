@@ -25,8 +25,9 @@ def cli():
 @click.option('-o', '--outpath', default='./', help='Output path')
 @click.option('--ignore', default=['quality'], help='List of bands to ignore')
 @click.option('-m', '--max-items', default=None, help='Max items', required=True)
-@click.option('--pre-collection', default=False, help="Defines whether the collection belongs to the pre-collection")
-def item2dataset_cli(collection, instrument, code, format, units, url, basepath, outpath, ignore, max_items, pre_collection):
+@click.option('--pre-collection', default=False, is_flag=True, help="Defines whether the collection belongs to the pre-collection")
+@click.option('--verbose', default=False, is_flag=True, help='Enable verbose mode')
+def item2dataset_cli(collection, instrument, code, format, units, url, basepath, outpath, ignore, max_items, pre_collection, verbose):
     constants = {
         'instrument_type': instrument,
         'plataform_code': code,
@@ -36,7 +37,8 @@ def item2dataset_cli(collection, instrument, code, format, units, url, basepath,
         'ignore': ignore,
         'outpath': outpath,
         'max_items': int(max_items),
-        "is_pre_collection": pre_collection
+        "is_pre_collection": pre_collection,
+        'verbose': verbose
     }
     s = stac.STAC(url, True)
     c = s.collection(collection)
@@ -53,8 +55,9 @@ def item2dataset_cli(collection, instrument, code, format, units, url, basepath,
 @click.option('--url', default='http://brazildatacube.dpi.inpe.br/bdc-stac/0.8.0/', help='BDC STAC url')
 @click.option('-o', '--outfile', default=None, help='Output file')
 @click.option('--ignore', default=['quality'], help='List of bands to ignore')
-@click.option('--pre-collection', default=False, help="Defines whether the collection belongs to the pre-collection")
-def collection2product_cli(collection, instrument, type, code, format, units, url, outfile, ignore, pre_collection):
+@click.option('--pre-collection', default=False, is_flag=True, help="Defines whether the collection belongs to the pre-collection")
+@click.option('--verbose', default=False, is_flag=True, help='Enable verbose mode')
+def collection2product_cli(collection, instrument, type, code, format, units, url, outfile, ignore, pre_collection, verbose):
     constants = {
         'instrument_type': instrument,
         'metadata_type': type,
@@ -62,7 +65,8 @@ def collection2product_cli(collection, instrument, type, code, format, units, ur
         'format_name': format,
         'units': units,
         'ignore': ignore,
-        "is_pre_collection": pre_collection
+        "is_pre_collection": pre_collection,
+        'verbose': verbose
     }
     
     s = stac.STAC(url, True)

@@ -24,6 +24,7 @@ setup_requires = [
 ]
 
 install_requires = [
+    'loguru==0.5.1',
     'gdal==3.1.0',
     'requests==2.22.0',
     'jsonschema==3.2.0',

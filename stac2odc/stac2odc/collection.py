@@ -2,10 +2,16 @@ import stac2odc.utils as utils
 
 from collections import OrderedDict
 
+from loguru import logger
+
+
 
 def collection2product(collection, constants):
     """Function to convert a STAC Collection JSON to ODC Product YAML
     """
+
+    if constants['verbose']:
+        logger.info("collection2product is running!")
 
     crs_proj4 = collection['properties']['bdc:crs']
     if constants['is_pre_collection']:
@@ -43,4 +49,8 @@ def collection2product(collection, constants):
     odc_config['metadata']['format'] = {'name': constants['format_name']}
     odc_config['measurements'] = [measurements(k, v)
                                   for k, v in collection['properties']['bdc:bands'].items() if k not in constants['ignore']]
+    
+    if constants['verbose']:
+        logger.info("Finished!")
+    
     return odc_config  # default_flow_style=None
