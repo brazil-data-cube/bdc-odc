@@ -14,11 +14,15 @@ STAC_MAX_PAGE = 99999999
 STAC_ITEM_PER_PAGE = 120
 
 
-def item2dataset(collection, constants):
+def item2dataset(collection: str, constants: dict) -> None:
     """Function to convert a STAC Collection JSON to ODC Dataset YAML
-    :param collection:
-    :param constants:
-    :return:
+    
+    Args:
+        collection (str): Collection name
+        constants (dict): A dict with begavior definitios
+    See:
+        See the BDC STAC catalog for more information on the collections available 
+        (http://brazildatacube.dpi.inpe.br/bdc-stac/0.8.0/)
     """
 
     if constants['verbose']:

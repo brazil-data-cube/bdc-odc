@@ -6,8 +6,15 @@ from loguru import logger
 
 
 
-def collection2product(collection, constants):
+def collection2product(collection: str, constants: dict) -> dict:
     """Function to convert a STAC Collection JSON to ODC Product YAML
+
+    Args:
+        collection (str): Collection name
+        constants (dict): A dict with begavior definitios
+    See:
+        See the BDC STAC catalog for more information on the collections available 
+        (http://brazildatacube.dpi.inpe.br/bdc-stac/0.8.0/)
     """
 
     if constants['verbose']:

@@ -62,8 +62,11 @@ def convert_coords_xy(coords, in_spatial_ref, out_spatial_ref):
 
 def stacdate_to_odcdate(datepattern):
     """Function to transform stac date pattern to ODC pattern
-    :param datepattern:
-    :return:
+    
+    Args:
+        datepattern (str): A String pattern with date (e. g. CB4_64_16D_STK_v1_020024_2020-07-11_2020-07-26)
+    Returns:
+        datetime
     """
 
     start_end = datepattern.split('_')[-2:]
