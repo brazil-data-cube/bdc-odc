@@ -61,9 +61,13 @@ def item2dataset(collection, constants):
             break
 
         for f in features:
-            _startdate, _enddate = utils.stacdate_to_odcdate(f['id'])
-            _featureid = utils.generate_id(f)
+            try:
+                _startdate, _enddate = utils.stacdate_to_odcdate(f['id'])
+            except:
+                _tmp = f['properties']['datetime']
+                _startdate, _enddate = _tmp, _tmp
 
+            _featureid = utils.generate_id(f)
             if constants['verbose']:
                 logger.info(f"New item found: {_featureid}")
             
