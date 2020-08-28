@@ -48,3 +48,18 @@ After this, you can run the bdc-in-a-box.sh script, it will record each of the d
 .. code-block:: shell
 
         $ ./bdc-in-a-box.sh
+
+
+collections.list
+------------------
+
+This is a csv file created to facilitate the definition of which data should be considered in indexing. This section presents its structure.
+
+The file is composed of 5 columns, being them:
+- Collection Name (This name must be the same as the one made available in BDC-STAC)
+- Platform (Sensor platform that generated the data. User-defined name pattern)
+- Sensor (Sensor that collected the data. User-defined name pattern)
+- ODC metadata type (Check ODC-Dataset_ documentation)
+- Number of images to be indexed
+
+.. _ODC-Dataset: https://datacube-core.readthedocs.io/en/latest/ops/dataset_documents.html#metadata-type-definition
