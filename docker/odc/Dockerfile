@@ -116,6 +116,8 @@ COPY files/install_aws_cli.sh .
 RUN sudo chown $ODC_USR:$ODC_USR install_aws_cli.sh\
     && chmod +x install_aws_cli.sh
     
+COPY files/bdc-in-a-box .
+
 #COPY files/docker-entrypoint.sh /usr/local/bin/
 #RUN chmod +x /usr/local/bin/docker-entrypoint.sh.sh
 ###########################################################################

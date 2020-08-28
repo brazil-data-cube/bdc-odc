@@ -1,4 +1,0 @@
-export DATADIR=/data
-export POSTGRES_DB=opendatacube
-export POSTGRES_USER=opendatacube
-export POSTGRES_PASSWORD=opendatacube
