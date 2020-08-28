@@ -56,10 +56,16 @@ collections.list
 This is a csv file created to facilitate the definition of which data should be considered in indexing. This section presents its structure.
 
 The file is composed of 5 columns, being them:
+
 - Collection Name (This name must be the same as the one made available in BDC-STAC)
+    - e.g. CB4_64_16D_STK_v1
 - Platform (Sensor platform that generated the data. User-defined name pattern)
+    - e.g. CBERS4
 - Sensor (Sensor that collected the data. User-defined name pattern)
+    - e.g. AWFI
 - ODC metadata type (Check ODC-Dataset_ documentation)
+    - e.g. eo
 - Number of images to be indexed
+    - e.g. 5000
 
 .. _ODC-Dataset: https://datacube-core.readthedocs.io/en/latest/ops/dataset_documents.html#metadata-type-definition
