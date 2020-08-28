@@ -35,7 +35,10 @@ def cli():
 @click.option('-m', '--max-items', default=None, help='Max items', required=True)
 @click.option('--pre-collection', default=False, is_flag=True, help="Defines whether the collection belongs to the pre-collection")
 @click.option('--verbose', default=False, is_flag=True, help='Enable verbose mode')
-def item2dataset_cli(collection, instrument, code, format, units, url, basepath, outpath, ignore, max_items, pre_collection, verbose):
+@click.option('--download', default=False, is_flag=True, help="Enable download file")
+@click.option('--download-out', default="./", help="Path to download dir")
+def item2dataset_cli(collection, instrument, code, format, units, url, basepath, outpath, ignore, max_items,
+                     pre_collection, verbose, download, download_out):
     constants = {
         'instrument_type': instrument,
         'plataform_code': code,
@@ -46,7 +49,9 @@ def item2dataset_cli(collection, instrument, code, format, units, url, basepath,
         'outpath': outpath,
         'max_items': int(max_items),
         "is_pre_collection": pre_collection,
-        'verbose': verbose
+        'verbose': verbose,
+        "download": download,
+        "download_out": download_out
     }
     s = stac.STAC(url, True)
     c = s.collection(collection)

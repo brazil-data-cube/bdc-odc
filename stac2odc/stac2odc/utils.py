@@ -8,6 +8,7 @@
 
 import uuid
 
+import os
 import osgeo
 from osgeo import osr
 from urllib.parse import urlparse
@@ -17,7 +18,7 @@ from datetime import datetime
 
 def href_to_path(href, basepath):
     url = urlparse(href)
-    return "{}{}".format(basepath, url.path)
+    return os.path.normpath(basepath + url.path)
 
 
 def lon_lat_2_y_x(geo_ref_points):

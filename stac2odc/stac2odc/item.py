@@ -6,17 +6,18 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 #
 
+import os
 import yaml
 from osgeo import osr
 from osgeo import gdal
 
 import stac2odc.utils as utils
+import stac2odc.environment as environment
 
 from datetime import datetime
 from collections import OrderedDict
 
 from loguru import logger
-
 
 STAC_MAX_PAGE = 99999999
 STAC_ITEM_PER_PAGE = 120
@@ -44,20 +45,13 @@ def item2dataset(collection: str, constants: dict) -> None:
     sr.ImportFromProj4(crs_proj4)
     crs_wkt = sr.ExportToWkt()
 
-    out_spatial_ref = osr.SpatialReference()
-    out_spatial_ref.ImportFromProj4(crs_proj4)
-
-    in_spatial_ref = osr.SpatialReference()
-    in_spatial_ref.ImportFromEPSG(4326)
-    product_type = utils.generate_product_type(collection)
-
     total_items = 0
     limit = STAC_ITEM_PER_PAGE
     max_items = constants['max_items']
 
     if constants['verbose']:
         logger.info("Collecting information from STAC...")
-    
+
     for page in range(1, STAC_MAX_PAGE + 1):
         if max_items is not None:
             if max_items == total_items:
@@ -82,11 +76,11 @@ def item2dataset(collection: str, constants: dict) -> None:
             _featureid = utils.generate_id(f)
             if constants['verbose']:
                 logger.info(f"New item found: {_featureid}")
-            
+
             feature = OrderedDict()
             feature['id'] = _featureid
             feature['creation_dt'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%fZ")
-            feature['product_type'] = product_type
+            feature['product_type'] = utils.generate_product_type(collection)
             feature['platform'] = {'code': constants['plataform_code']}
             feature['instrument'] = {'name': constants['instrument_type']}
             feature['format'] = {'name': constants['format_name']}
@@ -106,6 +100,12 @@ def item2dataset(collection: str, constants: dict) -> None:
             feature['extent']['from_dt'] = _startdate
             feature['extent']['center_dt'] = _startdate  # ToDo: Verify this
             feature['extent']['to_dt'] = _enddate
+
+            # verify if necessary download data
+            if constants['download']:
+                logger.info(f"Downloading item: {_featureid}")
+                environment.download_stac_tree(f, **constants)
+                constants['basepath'] = constants['download_out']
 
             # Extract image bbox
             first_band = next(iter(collection['properties']['bdc:bands']))
@@ -144,8 +144,7 @@ def item2dataset(collection: str, constants: dict) -> None:
                     else:
                         logger.info("Band '{}' was not found in asset '{}'".format(
                             band, f['id']))
-            file_name = "{}{}.yaml".format(constants['outpath'], f['id'])
-            with open(file_name, 'w') as f:
+            with open('{}.yaml'.format(os.path.join(constants['outpath'], f['id'])), 'w') as f:
                 yaml.dump(feature, f)
             total_items += 1
 
