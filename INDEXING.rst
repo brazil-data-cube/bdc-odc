@@ -10,6 +10,8 @@
 Adding Products and Indexing Datasets
 =====================================
 
+> The execution of the scripts below requires the BDC image collection. If you do not have access to BDC infrastructure use the bdc-in-a-box tool.
+
 Requirements
 ------------
 
