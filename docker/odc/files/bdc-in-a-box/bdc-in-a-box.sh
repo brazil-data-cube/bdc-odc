@@ -3,7 +3,7 @@
 # Install stac2odc
 git clone https://github.com/M3nin0/bdc-odc.git 
 cd bdc-odc && git checkout bdc-env && git branch bdc-env -u origin/bdc-env
-pip3 install  git+https://github.com/brazil-data-cube/stac.py@b-0.8.1
+pip3 install  git+https://github.com/brazil-data-cube/stac.py
 cd stac2odc && python3 setup.py install && cd ../.. && rm -rf bdc-odc
 
 # Indexing
