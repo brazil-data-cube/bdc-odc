@@ -83,3 +83,62 @@ def fix_precollection_crs(crs):
     """
     import re
     return re.sub('\+datum=(\S)*\s', '', crs)
+
+
+def to_wkt(projstring: str):
+    """Convert proj string to WKT
+    Args:
+        projstring (str): CRS in proj string format
+    Returns:
+        str: crs in wkt format
+    """
+    from osgeo import osr
+
+    sr = osr.SpatialReference()
+    sr.ImportFromProj4(projstring)
+    return sr.ExportToWkt()
+
+
+def raster_bounds(raster_file: str) -> tuple:
+    """get raster bounds
+    Args:
+        raster_file (str) : path to raster file
+    Returns:
+        tuple: bounds coordinates
+    """
+    from osgeo import gdal
+
+    src = gdal.Open(raster_file)
+    ulx, xres, _, uly, _, yres = src.GetGeoTransform()
+    lrx = ulx + (src.RasterXSize * xres)
+    lry = uly + (src.RasterYSize * yres)
+
+    return lrx, lry, ulx, uly
+
+
+def geometry_coordinates(feature):
+    """Geometry coordinates extractor
+    Args:
+        feature(dict): geometry coordinates
+    Returns:
+        dict: dict with geometry coordinates
+    """
+
+    return {
+                'ul': {
+                    'lon': feature['geometry']['coordinates'][0][0][0],
+                    'lat': feature['geometry']['coordinates'][0][0][1]
+                },
+                'ur': {
+                    'lon': feature['geometry']['coordinates'][0][1][0],
+                    'lat': feature['geometry']['coordinates'][0][1][1]
+                },
+                'lr': {
+                    'lon': feature['geometry']['coordinates'][0][2][0],
+                    'lat': feature['geometry']['coordinates'][0][2][1]
+                },
+                'll': {
+                    'lon': feature['geometry']['coordinates'][0][3][0],
+                    'lat': feature['geometry']['coordinates'][0][3][1]
+                }
+            }

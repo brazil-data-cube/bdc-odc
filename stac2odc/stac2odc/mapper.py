@@ -76,7 +76,6 @@ class Stac2ODCMapper08(Stac2ODCMapper):
         return odc_config
 
     def map_dataset(self, collection, dataset_items, **kwargs) -> OrderedDict:
-        from osgeo import osr
         from osgeo import gdal
         from datetime import datetime
         import stac2odc.environment as environment
@@ -87,10 +86,6 @@ class Stac2ODCMapper08(Stac2ODCMapper):
         crs_proj4 = collection['properties']['bdc:crs']
         if kwargs['is_pre_collection']:
             crs_proj4 = utils.fix_precollection_crs(crs_proj4)
-
-        sr = osr.SpatialReference()
-        sr.ImportFromProj4(crs_proj4)
-        crs_wkt = sr.ExportToWkt()
 
         odc_items = []
         for f in dataset_items:
@@ -115,15 +110,7 @@ class Stac2ODCMapper08(Stac2ODCMapper):
 
             feature['extent'] = OrderedDict()
             feature['extent']['coord'] = OrderedDict()
-            feature['extent']['coord']['ul'] = {'lon': f['geometry']['coordinates'][0][0][0],
-                                                'lat': f['geometry']['coordinates'][0][0][1]}
-            feature['extent']['coord']['ur'] = {'lon': f['geometry']['coordinates'][0][1][0],
-                                                'lat': f['geometry']['coordinates'][0][1][1]}
-            feature['extent']['coord']['lr'] = {'lon': f['geometry']['coordinates'][0][2][0],
-                                                'lat': f['geometry']['coordinates'][0][2][1]}
-            feature['extent']['coord']['ll'] = {'lon': f['geometry']['coordinates'][0][3][0],
-                                                'lat': f['geometry']['coordinates'][0][3][1]}
-
+            feature['extent']['coord'] = utils.geometry_coordinates(f)
             feature['extent']['from_dt'] = _startdate
             feature['extent']['center_dt'] = _startdate  # ToDo: Verify this
             feature['extent']['to_dt'] = _enddate
@@ -139,11 +126,8 @@ class Stac2ODCMapper08(Stac2ODCMapper):
             first_band_path = utils.href_to_path(
                 f['assets'][first_band]['href'], kwargs['basepath'])
 
-            src = gdal.Open(first_band_path)
-            ulx, xres, _, uly, _, yres = src.GetGeoTransform()
-            lrx = ulx + (src.RasterXSize * xres)
-            lry = uly + (src.RasterYSize * yres)
-
+            # build grid_spatial
+            lrx, lry, ulx, uly = utils.raster_bounds(first_band_path)
             feature['grid_spatial'] = OrderedDict()
             feature['grid_spatial']['projection'] = OrderedDict()
             feature['grid_spatial']['projection']['geo_ref_points'] = OrderedDict()
@@ -156,7 +140,7 @@ class Stac2ODCMapper08(Stac2ODCMapper):
             feature['grid_spatial']['projection']['geo_ref_points']['ll'] = {
                 'x': ulx, 'y': lry}
 
-            feature['grid_spatial']['projection']['spatial_reference'] = crs_wkt
+            feature['grid_spatial']['projection']['spatial_reference'] = utils.to_wkt(crs_proj4)
             feature['image'] = OrderedDict()
             feature['image']['bands'] = OrderedDict()
             band_counter = 1
@@ -226,8 +210,6 @@ class Stac2ODCMapper09(Stac2ODCMapper):
         return odc_config
 
     def map_dataset(self, collection, dataset_items, **kwargs) -> OrderedDict:
-        from osgeo import osr
-        from osgeo import gdal
         from datetime import datetime
         import stac2odc.environment as environment
 
@@ -237,10 +219,6 @@ class Stac2ODCMapper09(Stac2ODCMapper):
         crs_proj4 = collection['cube:dimensions']['x']['reference_system']
         if kwargs['is_pre_collection']:
             crs_proj4 = utils.fix_precollection_crs(crs_proj4)
-
-        sr = osr.SpatialReference()
-        sr.ImportFromProj4(crs_proj4)
-        crs_wkt = sr.ExportToWkt()
 
         odc_items = []
         for f in dataset_items:
@@ -265,15 +243,7 @@ class Stac2ODCMapper09(Stac2ODCMapper):
 
             feature['extent'] = OrderedDict()
             feature['extent']['coord'] = OrderedDict()
-            feature['extent']['coord']['ul'] = {'lon': f['geometry']['coordinates'][0][0][0],
-                                                'lat': f['geometry']['coordinates'][0][0][1]}
-            feature['extent']['coord']['ur'] = {'lon': f['geometry']['coordinates'][0][1][0],
-                                                'lat': f['geometry']['coordinates'][0][1][1]}
-            feature['extent']['coord']['lr'] = {'lon': f['geometry']['coordinates'][0][2][0],
-                                                'lat': f['geometry']['coordinates'][0][2][1]}
-            feature['extent']['coord']['ll'] = {'lon': f['geometry']['coordinates'][0][3][0],
-                                                'lat': f['geometry']['coordinates'][0][3][1]}
-
+            feature['extent']['coord'] = utils.geometry_coordinates(f)
             feature['extent']['from_dt'] = _startdate
             feature['extent']['center_dt'] = _startdate # ToDo: Verify this
             feature['extent']['to_dt'] = _enddate
@@ -289,11 +259,8 @@ class Stac2ODCMapper09(Stac2ODCMapper):
             first_band_path = utils.href_to_path(
                 f['assets'][first_band]['href'], kwargs['basepath'])
 
-            src = gdal.Open(first_band_path)
-            ulx, xres, _, uly, _, yres = src.GetGeoTransform()
-            lrx = ulx + (src.RasterXSize * xres)
-            lry = uly + (src.RasterYSize * yres)
-
+            # build grid_spatial
+            lrx, lry, ulx, uly = utils.raster_bounds(first_band_path)
             feature['grid_spatial'] = OrderedDict()
             feature['grid_spatial']['projection'] = OrderedDict()
             feature['grid_spatial']['projection']['geo_ref_points'] = OrderedDict()
@@ -306,7 +273,7 @@ class Stac2ODCMapper09(Stac2ODCMapper):
             feature['grid_spatial']['projection']['geo_ref_points']['ll'] = {
                 'x': ulx, 'y': lry}
 
-            feature['grid_spatial']['projection']['spatial_reference'] = crs_wkt
+            feature['grid_spatial']['projection']['spatial_reference'] = utils.to_wkt(crs_proj4)
             feature['image'] = OrderedDict()
             feature['image']['bands'] = OrderedDict()
             band_counter = 1
