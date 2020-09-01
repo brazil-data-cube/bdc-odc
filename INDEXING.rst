@@ -85,7 +85,7 @@ For each `Item` in the `Collection`, a YAML file will be created with the metada
 Add Dataset to ODC database 
 ---------------------------
 
-To register one `Dataset` in the ODC database, use the following command:
+To register one `Dataset` in the ODC database, use the following command (The file name shown in the example below may change according to the date when you made the indexing. To avoid problems, check the files in the directory).
 
 .. code-block:: shell
 
