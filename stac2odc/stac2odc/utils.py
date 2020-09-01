@@ -35,13 +35,6 @@ def generate_id(feature):
     return str(uuid.uuid5(uuid.NAMESPACE_URL, feature['id']))
 
 
-def generate_product_type(collection):
-    return "{}_{}_{}".format(
-        collection['properties']['bdc:temporal_composition']['schema'],
-        collection['properties']['bdc:temporal_composition']['step'],
-        collection['properties']['bdc:temporal_composition']['unit'])
-
-
 def convert_coords(coords, in_spatial_ref, out_spatial_ref):
     t = osr.CoordinateTransformation(in_spatial_ref, out_spatial_ref)
 

@@ -25,14 +25,27 @@ class Stac2ODCMapper(ABC):
 
 class Stac2ODCMapper08(Stac2ODCMapper):
     def map_collection(self, collection, **kwargs) -> OrderedDict:
+        def measurements(tag, data):
+            m = OrderedDict()
+            m['name'] = tag
+            m['aliases'] = [data['name'], ]
+            m['dtype'] = data['data_type'].lower()
+            m['nodata'] = data['fill']
+            m['units'] = kwargs['units']
+            return m
+
+        def generate_product_type(collection):
+            return "{}_{}_{}".format(
+                collection['properties']['bdc:temporal_composition']['schema'],
+                collection['properties']['bdc:temporal_composition']['step'],
+                collection['properties']['bdc:temporal_composition']['unit'])
+
         if kwargs['verbose']:
             logger.info("collection2product is running!")
 
         crs_proj4 = collection['properties']['bdc:crs']
         if kwargs['is_pre_collection']:
             crs_proj4 = utils.fix_precollection_crs(crs_proj4)
-
-        product_type = utils.generate_product_type(collection)
 
         odc_config = OrderedDict()
         odc_config['name'] = collection['id']
@@ -48,19 +61,10 @@ class Stac2ODCMapper08(Stac2ODCMapper):
         odc_config['storage']['resolution']['y'] = int(
             collection['properties']['bdc:bands'][first_band]['resolution_y']) * -1
 
-        def measurements(tag, data):
-            m = OrderedDict()
-            m['name'] = tag  # data['name']
-            m['aliases'] = [data['name'], ]
-            m['dtype'] = data['data_type'].lower()
-            m['nodata'] = data['fill']
-            m['units'] = kwargs['units']
-            return m
-
         odc_config['metadata'] = OrderedDict()
         odc_config['metadata']['platform'] = {'code': kwargs['platform_code']}
         odc_config['metadata']['instrument'] = {'name': kwargs['instrument_type']}
-        odc_config['metadata']['product_type'] = product_type
+        odc_config['metadata']['product_type'] = generate_product_type(collection)
         odc_config['metadata']['format'] = {'name': kwargs['format_name']}
         odc_config['measurements'] = [measurements(k, v)
                                       for k, v in collection['properties']['bdc:bands'].items() if
@@ -172,7 +176,52 @@ class Stac2ODCMapper08(Stac2ODCMapper):
 
 class Stac2ODCMapper09(Stac2ODCMapper):
     def map_collection(self, collection, **kwargs) -> OrderedDict:
-        pass
+        def measurements(data):
+            m = OrderedDict()
+            m['name'] = data['name']
+            m['aliases'] = [data['name'], ]
+            m['dtype'] = data['data_type'].lower()
+            m['nodata'] = data['nodata']
+            m['units'] = kwargs['units']
+            return m
+
+        def generate_product_type(collectionobj):
+            return "{}_{}_{}".format(
+                collectionobj['bdc:temporal_composition']['schema'],
+                collectionobj['bdc:temporal_composition']['step'],
+                collectionobj['bdc:temporal_composition']['unit'])
+
+        if kwargs['verbose']:
+            logger.info("collection2product is running!")
+
+        crs_proj4 = collection['cube:dimensions']['x']['reference_system']
+        if kwargs['is_pre_collection']: # fix gdal3 proj4 pattern error
+            crs_proj4 = utils.fix_precollection_crs(crs_proj4)
+
+        odc_config = OrderedDict()
+        odc_config['name'] = collection['id']
+        odc_config['description'] = collection['description']
+        odc_config['metadata_type'] = kwargs['metadata_type']
+
+        odc_config['storage'] = OrderedDict()
+        odc_config['storage']['crs'] = crs_proj4
+        odc_config['storage']['resolution'] = OrderedDict()
+        odc_config['storage']['resolution']['x'] = int(collection['properties']['eo:gsd'])
+        odc_config['storage']['resolution']['y'] = int(collection['properties']['eo:gsd']) * -1
+
+        # Generate platform infos
+        odc_config['metadata'] = OrderedDict()
+        odc_config['metadata']['platform'] = {'code': kwargs['platform_code']}
+        odc_config['metadata']['instrument'] = {'name': kwargs['instrument_type']}
+        odc_config['metadata']['product_type'] = generate_product_type(collection)
+        odc_config['metadata']['format'] = {'name': kwargs['format_name']}
+        odc_config['measurements'] = [measurements(v)
+                                      for v in collection['properties']['eo:bands'] if
+                                      v['common_name'] not in kwargs['ignore']]
+
+        if kwargs['verbose']:
+            logger.info("Finished!")
+        return odc_config
 
     def map_dataset(self, collection, dataset_items, **kwargs) -> OrderedDict:
         pass
