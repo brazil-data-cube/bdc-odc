@@ -52,7 +52,7 @@ def item2dataset(collection: Collection, mapper: Stac2ODCMapper, **kwargs) -> No
         if len(features) == 0:
             break
 
-        odc_items = mapper().map_dataset(collection, features, **kwargs)
+        odc_items = mapper.map_dataset(collection, features, **kwargs)
         total_items += len(odc_items)
 
         if kwargs['verbose']:
@@ -90,4 +90,4 @@ if __name__ == '__main__':
 
     s = stac.STAC('http://brazildatacube.dpi.inpe.br/bdc-stac/0.8.0/', True)
     c = s.collection('CB4_64_16D_STK_v1')
-    item2dataset(c, Stac2ODCMapper08, **constants)
+    item2dataset(c, Stac2ODCMapper08(), **constants)

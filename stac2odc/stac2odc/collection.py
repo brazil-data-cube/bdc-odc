@@ -24,7 +24,7 @@ def collection2product(collection: Collection, mapper: Stac2ODCMapper, **kwargs)
     """
 
     # ToDo: Add validators
-    return mapper().map_collection(collection, **kwargs)
+    return mapper.map_collection(collection, **kwargs)
 
 
 if __name__ == '__main__':
@@ -49,7 +49,7 @@ if __name__ == '__main__':
 
     s = stac.STAC('http://brazildatacube.dpi.inpe.br/bdc-stac/0.8.0/', True)
     c = s.collection('CB4_64_16D_STK_v1')
-    yaml_content = stac2odc.collection.collection2product(c, Stac2ODCMapper08,**constants)
+    yaml_content = stac2odc.collection.collection2product(c, Stac2ODCMapper08(), **constants)
     if outfile is None:
         print(yaml.dump(yaml_content))
     else:
