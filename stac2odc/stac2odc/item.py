@@ -7,6 +7,7 @@
 #
 
 import os
+import yaml
 
 from loguru import logger
 from stac.collection import Collection
