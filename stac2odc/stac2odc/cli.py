@@ -57,7 +57,7 @@ def item2dataset_cli(collection, instrument, code, format, units, url, basepath,
     }
     s = stac.STAC(url, True)
     c = s.collection(collection)
-    stac2odc.item.item2dataset(c, mapper.Stac2ODCMapper08, **constants)
+    stac2odc.item.item2dataset(c, mapper.Stac2ODCMapper08(), **constants)
 
 
 @cli.command(name="collection2product", help="Function to convert a STAC Collection JSON to ODC Product YAML")
@@ -88,7 +88,7 @@ def collection2product_cli(collection, instrument, type, code, format, units, ur
 
     s = stac.STAC(url, True)
     c = s.collection(collection)
-    yaml_content = stac2odc.collection.collection2product(c, mapper.Stac2ODCMapper08, **constants)
+    yaml_content = stac2odc.collection.collection2product(c, mapper.Stac2ODCMapper08(), **constants)
     if outfile is None:
         print(yaml.dump(yaml_content))
     else:
