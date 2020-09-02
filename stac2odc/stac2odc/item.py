@@ -58,9 +58,10 @@ def item2dataset(collection: Collection, mapper: Stac2ODCMapper, **kwargs) -> No
 
         if kwargs['verbose']:
             logger.info('Saving page {}'.format(page))
-            for odc_item in odc_items:
-                with open('{}.yaml'.format(os.path.join(kwargs['outpath'], odc_item['id'])), 'w') as _file:
-                    yaml.dump(odc_item, _file)
+
+        for odc_item in odc_items:
+            with open('{}.yaml'.format(os.path.join(kwargs['outpath'], odc_item['id'])), 'w') as _file:
+                yaml.dump(odc_item, _file)
 
     if kwargs['verbose']:
         logger.info("Finished!")

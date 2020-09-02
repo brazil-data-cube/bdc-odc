@@ -119,7 +119,6 @@ class Stac2ODCMapper08(Stac2ODCMapper):
             if kwargs['download']:
                 logger.info(f"Downloading item: {_featureid}")
                 environment.download_stac_tree(f, **kwargs)
-                kwargs['basepath'] = kwargs['download_out']
 
             # Extract image bbox
             first_band = next(iter(collection['properties']['bdc:bands']))
