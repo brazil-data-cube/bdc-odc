@@ -1,5 +1,14 @@
+#
+# This file is part of BDC-ODC.
+# Copyright (C) 2020 INPE.
+#
+# stac2odc is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+#
+
 import uuid
 
+import os
 import osgeo
 from osgeo import osr
 from urllib.parse import urlparse
@@ -9,7 +18,7 @@ from datetime import datetime
 
 def href_to_path(href, basepath):
     url = urlparse(href)
-    return "{}{}".format(basepath, url.path)
+    return os.path.normpath(basepath + url.path)
 
 
 def lon_lat_2_y_x(geo_ref_points):
@@ -24,13 +33,6 @@ def generate_id(feature):
         if link['rel'] == 'self':
             return str(uuid.uuid5(uuid.NAMESPACE_URL, link['href']))
     return str(uuid.uuid5(uuid.NAMESPACE_URL, feature['id']))
-
-
-def generate_product_type(collection):
-    return "{}_{}_{}".format(
-        collection['properties']['bdc:temporal_composition']['schema'],
-        collection['properties']['bdc:temporal_composition']['step'],
-        collection['properties']['bdc:temporal_composition']['unit'])
 
 
 def convert_coords(coords, in_spatial_ref, out_spatial_ref):
@@ -62,8 +64,11 @@ def convert_coords_xy(coords, in_spatial_ref, out_spatial_ref):
 
 def stacdate_to_odcdate(datepattern):
     """Function to transform stac date pattern to ODC pattern
-    :param datepattern:
-    :return:
+    
+    Args:
+        datepattern (str): A String pattern with date (e. g. CB4_64_16D_STK_v1_020024_2020-07-11_2020-07-26)
+    Returns:
+        datetime
     """
 
     start_end = datepattern.split('_')[-2:]
@@ -78,3 +83,62 @@ def fix_precollection_crs(crs):
     """
     import re
     return re.sub('\+datum=(\S)*\s', '', crs)
+
+
+def to_wkt(projstring: str):
+    """Convert proj string to WKT
+    Args:
+        projstring (str): CRS in proj string format
+    Returns:
+        str: crs in wkt format
+    """
+    from osgeo import osr
+
+    sr = osr.SpatialReference()
+    sr.ImportFromProj4(projstring)
+    return sr.ExportToWkt()
+
+
+def raster_bounds(raster_file: str) -> tuple:
+    """get raster bounds
+    Args:
+        raster_file (str) : path to raster file
+    Returns:
+        tuple: bounds coordinates
+    """
+    from osgeo import gdal
+
+    src = gdal.Open(raster_file)
+    ulx, xres, _, uly, _, yres = src.GetGeoTransform()
+    lrx = ulx + (src.RasterXSize * xres)
+    lry = uly + (src.RasterYSize * yres)
+
+    return lrx, lry, ulx, uly
+
+
+def geometry_coordinates(feature):
+    """Geometry coordinates extractor
+    Args:
+        feature(dict): geometry coordinates
+    Returns:
+        dict: dict with geometry coordinates
+    """
+
+    return {
+                'ul': {
+                    'lon': feature['geometry']['coordinates'][0][0][0],
+                    'lat': feature['geometry']['coordinates'][0][0][1]
+                },
+                'ur': {
+                    'lon': feature['geometry']['coordinates'][0][1][0],
+                    'lat': feature['geometry']['coordinates'][0][1][1]
+                },
+                'lr': {
+                    'lon': feature['geometry']['coordinates'][0][2][0],
+                    'lat': feature['geometry']['coordinates'][0][2][1]
+                },
+                'll': {
+                    'lon': feature['geometry']['coordinates'][0][3][0],
+                    'lat': feature['geometry']['coordinates'][0][3][1]
+                }
+            }

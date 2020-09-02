@@ -1,41 +1,43 @@
+#
+# This file is part of BDC-ODC.
+# Copyright (C) 2020 INPE.
+#
+# stac2odc is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+#
+
+import os
 import yaml
-from osgeo import osr
-from osgeo import gdal
 
-import stac2odc.utils as utils
-
-from datetime import datetime
-from collections import OrderedDict
-
+from loguru import logger
+from stac.collection import Collection
+from stac2odc.mapper import Stac2ODCMapper
 
 STAC_MAX_PAGE = 99999999
+STAC_ITEM_PER_PAGE = 120
 
 
-def item2dataset(collection, constants):
+def item2dataset(collection: Collection, mapper: Stac2ODCMapper, **kwargs) -> None:
     """Function to convert a STAC Collection JSON to ODC Dataset YAML
-    :param collection:
-    :param constants:
-    :return:
+
+    Args:
+        collection (stac.collection.Collection): An Collection
+        constants (dict): A dict with behavior definitions
+        mapper (stac2odc.mapper.Stac2ODCMapper): An mapper to convert STAC collection to ODC Datasets
+    See:
+        See the BDC STAC catalog for more information on the collections available
+        (http://brazildatacube.dpi.inpe.br/bdc-stac/0.8.0/)
     """
 
-    crs_proj4 = collection['properties']['bdc:crs']
-    if constants['is_pre_collection']:
-        crs_proj4 = utils.fix_precollection_crs(crs_proj4)
+    if kwargs['verbose']:
+        logger.info("item2dataset is running!")
 
-    sr = osr.SpatialReference()
-    sr.ImportFromProj4(crs_proj4)
-    crs_wkt = sr.ExportToWkt()
-
-    out_spatial_ref = osr.SpatialReference()
-    out_spatial_ref.ImportFromProj4(crs_proj4)
-
-    in_spatial_ref = osr.SpatialReference()
-    in_spatial_ref.ImportFromEPSG(4326)
-    product_type = utils.generate_product_type(collection)
-
-    limit = 120
     total_items = 0
-    max_items = constants['max_items']
+    limit = STAC_ITEM_PER_PAGE
+    max_items = kwargs['max_items']
+
+    if kwargs['verbose']:
+        logger.info("Collecting information from STAC...")
 
     for page in range(1, STAC_MAX_PAGE + 1):
         if max_items is not None:
@@ -51,71 +53,43 @@ def item2dataset(collection, constants):
         if len(features) == 0:
             break
 
-        for f in features:
-            _startdate, _enddate = utils.stacdate_to_odcdate(f['id'])
+        odc_items = mapper.map_dataset(collection, features, **kwargs)
+        total_items += len(odc_items)
 
-            feature = OrderedDict()
-            feature['id'] = utils.generate_id(f)
-            feature['creation_dt'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%fZ")
-            feature['product_type'] = product_type
-            feature['platform'] = {'code': constants['plataform_code']}
-            feature['instrument'] = {'name': constants['instrument_type']}
-            feature['format'] = {'name': constants['format_name']}
-            feature['lineage'] = {'source_datasets': {}}
+        if kwargs['verbose']:
+            logger.info('Saving page {}'.format(page))
 
-            feature['extent'] = OrderedDict()
-            feature['extent']['coord'] = OrderedDict()
-            feature['extent']['coord']['ul'] = {'lon': f['geometry']['coordinates'][0][0][0],
-                                                'lat': f['geometry']['coordinates'][0][0][1]}
-            feature['extent']['coord']['ur'] = {'lon': f['geometry']['coordinates'][0][1][0],
-                                                'lat': f['geometry']['coordinates'][0][1][1]}
-            feature['extent']['coord']['lr'] = {'lon': f['geometry']['coordinates'][0][2][0],
-                                                'lat': f['geometry']['coordinates'][0][2][1]}
-            feature['extent']['coord']['ll'] = {'lon': f['geometry']['coordinates'][0][3][0],
-                                                'lat': f['geometry']['coordinates'][0][3][1]}
+        for odc_item in odc_items:
+            with open('{}.yaml'.format(os.path.join(kwargs['outpath'], odc_item['id'])), 'w') as _file:
+                yaml.dump(odc_item, _file)
 
-            feature['extent']['from_dt'] = _startdate
-            feature['extent']['center_dt'] = _startdate  # ToDo: Verify this
-            feature['extent']['to_dt'] = _enddate
+    if kwargs['verbose']:
+        logger.info("Finished!")
 
-            # Extract image bbox
-            first_band = next(iter(collection['properties']['bdc:bands']))
-            first_band_path = utils.href_to_path(
-                f['assets'][first_band]['href'], constants['basepath'])
 
-            src = gdal.Open(first_band_path)
-            ulx, xres, _, uly, _, yres = src.GetGeoTransform()
-            lrx = ulx + (src.RasterXSize * xres)
-            lry = uly + (src.RasterYSize * yres)
+if __name__ == '__main__':
+    import stac
+    import yaml
 
-            feature['grid_spatial'] = OrderedDict()
-            feature['grid_spatial']['projection'] = OrderedDict()
-            feature['grid_spatial']['projection']['geo_ref_points'] = OrderedDict()
-            feature['grid_spatial']['projection']['geo_ref_points']['ul'] = {
-                'x': ulx, 'y': uly}
-            feature['grid_spatial']['projection']['geo_ref_points']['ur'] = {
-                'x': lrx, 'y': uly}
-            feature['grid_spatial']['projection']['geo_ref_points']['lr'] = {
-                'x': lrx, 'y': lry}
-            feature['grid_spatial']['projection']['geo_ref_points']['ll'] = {
-                'x': ulx, 'y': lry}
+    import stac2odc.item
+    import stac2odc.collection
+    from stac2odc.mapper import Stac2ODCMapper08
 
-            feature['grid_spatial']['projection']['spatial_reference'] = crs_wkt
-            feature['image'] = OrderedDict()
-            feature['image']['bands'] = OrderedDict()
-            band_counter = 1
-            for band in collection['properties']['bdc:bands'].keys():
-                if band not in constants['ignore']:
-                    if band in f['assets']:
-                        feature['image']['bands'][band] = OrderedDict()
-                        feature['image']['bands'][band]['path'] = utils.href_to_path(
-                            f['assets'][band]['href'], constants['basepath'])
-                        feature['image']['bands'][band]['layer'] = 1
-                        band_counter += 1
-                    else:
-                        print("Band '{}' was not found in asset '{}'".format(
-                            band, f['id']))
-            file_name = "{}{}.yaml".format(constants['outpath'], f['id'])
-            with open(file_name, 'w') as f:
-                yaml.dump(feature, f)
-            total_items += 1
+    constants = {
+        'instrument_type': 'AWFI',
+        'plataform_code': 'CBERS4',
+        'format_name': 'GeoTIFF',
+        'units': 'm',
+        'basepath': './',
+        'ignore': ['quality'],
+        'outpath': './',
+        'max_items': 1,
+        "is_pre_collection": False,
+        'verbose': True,
+        "download": True,
+        "download_out": './'
+    }
+
+    s = stac.STAC('http://brazildatacube.dpi.inpe.br/bdc-stac/0.8.0/', True)
+    c = s.collection('CB4_64_16D_STK_v1')
+    item2dataset(c, Stac2ODCMapper08(), **constants)

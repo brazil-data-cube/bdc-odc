@@ -24,11 +24,13 @@ setup_requires = [
 ]
 
 install_requires = [
-    'gdal==3.1.0',
+    'tqdm==4.48.2',
+    'loguru==0.5.1',
+    'gdal==2.4.0',
     'requests==2.22.0',
     'jsonschema==3.2.0',
     'pyyaml>=5.3.1',
-    'stac @ git+https://github.com/brazil-data-cube/stac.py@b-0.8.1',
+    'stac @ git+https://github.com/brazil-data-cube/stac.py',
     'click>=7.1.0'
 ]
 
