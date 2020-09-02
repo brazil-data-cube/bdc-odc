@@ -30,7 +30,7 @@ install_requires = [
     'requests==2.22.0',
     'jsonschema==3.2.0',
     'pyyaml>=5.3.1',
-    'stac @ git+https://github.com/brazil-data-cube/stac.py',
+    'stac @ git+git://github.com/brazil-data-cube/stac.py.git@b-0.9.0#egg=stac',
     'click>=7.1.0'
 ]
 
