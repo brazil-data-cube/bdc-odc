@@ -29,7 +29,7 @@ At the ODC terminal, run the following commands to download and install as requi
 
     $ git clone https://github.com/brazil-data-cube/bdc-odc.git
     $ cd bdc-odc/stac2odc
-    $ python3 setup.py install
+    $ sudo pip3 install -e .[all]
 
 The following steps are required for registration of a `Product` and indexing the `Datasets`:
     * Extract Product metadata
