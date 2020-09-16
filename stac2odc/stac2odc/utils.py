@@ -142,3 +142,28 @@ def geometry_coordinates(feature):
                     'lat': feature['geometry']['coordinates'][0][3][1]
                 }
             }
+
+
+def prepare_advanced_filter(filter_options: str) -> dict:
+    """Prepare a region geometry from file or string
+    Args:
+        filter_options: geometry str or file path to geometry.
+
+        >> filter_options = {'intersects': {'type': 'Point', 'coordinates': [-45, -13]}}
+        >> filter_options = '/path/to/geom.json
+    Returns:
+    """
+    import ast
+    import json
+
+    if filter_options:
+        if os.path.isfile(filter_options):
+            with open(filter_options, 'r') as f:
+                filter_options = json.load(f)
+            # advanced filter do not specify collections!
+            if 'collections' in filter_options:
+                del filter_options['collections']
+        else:
+            filter_options = ast.literal_eval(filter_options)
+        return filter_options
+    return None
