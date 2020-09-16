@@ -59,7 +59,7 @@ collections.list
 
 This is a csv file created to facilitate the definition of which data should be considered in indexing. This section presents its structure.
 
-The file is composed of 5 columns, being them:
+The file is composed of 6 columns, being them:
 
 - Collection Name (This name must be the same as the one made available in BDC-STAC)
     - e.g. CB4_64_16D_STK_v1
