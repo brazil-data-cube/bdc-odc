@@ -92,4 +92,4 @@ if __name__ == '__main__':
 
     # stacservice, item_filter, mapper: Stac2ODCMapper, **kwargs
     s = stac.STAC('http://brazildatacube.dpi.inpe.br/stac/', False)
-    item2dataset(s, {'collections': ['CB4_64_16D_STK-1']}, Stac2ODCMapper09(),**constants)
+    item2dataset(s, {'collections': ['CB4_64_16D_STK-1']}, Stac2ODCMapper09(), **constants)
