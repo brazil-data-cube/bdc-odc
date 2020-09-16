@@ -46,6 +46,7 @@ def item2dataset(stacservice, item_filter, mapper: Stac2ODCMapper, **kwargs) -> 
         if limit > (max_items - total_items):
             limit = (max_items - total_items)
 
+        collection = stacservice.collection(item_filter["collections"][0])
         features = stacservice.search({
             **item_filter, **{"page": page, "limit": limit}
         }).features
@@ -54,7 +55,7 @@ def item2dataset(stacservice, item_filter, mapper: Stac2ODCMapper, **kwargs) -> 
             break
 
         # Multiple dataset is ignored!
-        odc_items = mapper.map_dataset(item_filter["collections"][0], features, **kwargs)
+        odc_items = mapper.map_dataset(collection, features, **kwargs)
         total_items += len(odc_items)
 
         if kwargs['verbose']:
