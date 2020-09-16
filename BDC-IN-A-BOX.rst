@@ -67,5 +67,7 @@ The file is composed of 5 columns, being them:
     - e.g. eo
 - Number of images to be indexed
     - e.g. 5000
+- File with filter for File with parameters for filtering the data to be downloaded in bdc-in-a-box. The parameters are the same as those offered in the `stac.py <https://github.com/brazil-data-cube/stac.py>`.
+    - e.g. `advanced_filter.json <https://github.com/brazil-data-cube/bdc-odc/blob/master/docker/odc/files/bdc-in-a-box/advanced_filter.json>`
 
 .. _ODC-Dataset: https://datacube-core.readthedocs.io/en/latest/ops/dataset_documents.html#metadata-type-definition
