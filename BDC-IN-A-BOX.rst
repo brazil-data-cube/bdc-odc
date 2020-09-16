@@ -28,19 +28,23 @@ Inside the container, when listing the contents of the current directory three f
 
         $ ls
 
-        bdc-in-a-box.sh  collections.list  install_aws_cli.sh
+        bdc-in-a-box/  collections.list  install_aws_cli.sh
 
-The bdcbox tool consists of the bdc-in-a-box.sh and collections.list files. The .sh file does all the settings while the collection.list has the definition of the collections to be downloaded.
+The bdcbox tool consists of the files that are inside the bdc-in-a-box directory. The ``bdc-in-a-box.sh`` file does all the settings while the ``collection.list`` has the definition of the collections to be downloaded.  Also available is the ``install_stac2odc.sh`` file with filter parameters, which can be changed according to the need of region that needs to be filtered.
 
-In this example, some images from the BDC will be downloaded, considering the collections already present in the collections.list file. The change will be made in quantity, for this, access the file and change the column with the value 5000. Change this value for three. After the change, the file will look like this.
+In this example, some images from the BDC will be downloaded, considering the collections already present in the collections.list file. The change will be made in quantity, for this, access the file and change the column with the value 5000. Change this value for three. The filter file is also maintained in the ``collections.list``.
+
+.. NOTE::
+
+    You can edit these files, ``collections.list`` and ``advanced_filter.json`` according to your needs
 
 .. code-block:: shell
 
         $ cat collections.list
 
-        CB4_64_16D_STK_v1,CBERS4,AWFI,eo,1
-        LC8_30_16D_STK_v1,LC8,OLI,eo,1
-        S2_10_16D_STK_v1,S2,MSI,eo,1
+        CB4_64_16D_STK_v1,CBERS4,AWFI,eo,3,advanced_filter.json
+        LC8_30_16D_STK_v1,LC8,OLI,eo,3,advanced_filter.json
+        S2_10_16D_STK_v1,S2,MSI,eo,3,advanced_filter.json
 
 
 After this, you can run the bdc-in-a-box.sh script, it will record each of the downloaded collections in the ODC.
