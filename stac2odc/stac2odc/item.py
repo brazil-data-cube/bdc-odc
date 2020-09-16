@@ -7,10 +7,8 @@
 #
 
 import os
-import yaml
 
 from loguru import logger
-from stac.collection import Collection
 from stac2odc.mapper import Stac2ODCMapper
 
 STAC_MAX_PAGE = 99999999
@@ -75,7 +73,7 @@ if __name__ == '__main__':
 
     import stac2odc.item
     import stac2odc.collection
-    from stac2odc.mapper import Stac2ODCMapper08
+    from stac2odc.mapper import Stac2ODCMapper09
 
     constants = {
         'instrument_type': 'AWFI',
@@ -92,6 +90,6 @@ if __name__ == '__main__':
         "download_out": './'
     }
 
-    s = stac.STAC('http://brazildatacube.dpi.inpe.br/bdc-stac/0.8.0/', True)
-    c = s.collection('CB4_64_16D_STK_v1')
-    item2dataset(c, Stac2ODCMapper08(), **constants)
+    # stacservice, item_filter, mapper: Stac2ODCMapper, **kwargs
+    s = stac.STAC('http://brazildatacube.dpi.inpe.br/stac/', False)
+    item2dataset(s, {'collections': ['CB4_64_16D_STK-1']}, Stac2ODCMapper09(),**constants)
