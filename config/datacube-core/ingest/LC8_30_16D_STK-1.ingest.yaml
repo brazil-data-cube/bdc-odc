@@ -1,0 +1,121 @@
+source_type: LC8_30_16D_STK-1
+output_type: LC8_30_16D_STK-1_ingested
+
+description: Landsat-8 16 days in year
+
+location: '/data/ingested/'
+file_path_template: 'LC8_30_16D_STK-1_ingested/LC8_30_16D_STK-1_ingested_{tile_index[0]}_{tile_index[1]}_{start_time}.nc'
+
+global_attributes:
+    title: Landsat-8 (OLI) Cube Stack 16 days (v001) - Tiled
+    summary: Landsat-8 16 days in year"
+    source: LC8 USGS
+    institution: INPE
+    instrument: OLI
+    cdm_data_type: Grid
+    keywords: REFLECTANCE,LC8,EARTH SCIENCE
+    platform: LC8
+    processing_level: L2
+    product_version: 'v001'
+    product_suite: USGS LC8
+    project: BDC
+    naming_authority: bdc.inpe
+    acknowledgment: LC8 is provided by the USGS
+
+storage:
+    driver: NetCDF CF
+
+    crs: +proj=aea +lat_0=-12 +lon_0=-54 +lat_1=-2 +lat_2=-22 +x_0=5000000 +y_0=10000000 +ellps=GRS80 +units=m +no_defs
+    tile_size:
+            x: 100000.0
+            y: 100000.0
+    resolution:
+            x: 64
+            y: -64
+    chunking:
+        x: 200
+        y: 200
+        time: 1
+    dimension_order: ['time', 'y', 'x']
+
+measurements:
+    - name: band1
+      dtype: int16
+      nodata: -9999
+      resampling_method: nearest
+      src_varname: 'band1'
+      zlib: True
+      attrs:
+        alias: "coastal"
+
+    - name: band2
+      dtype: int16
+      nodata: -9999
+      resampling_method: nearest
+      src_varname: 'band2'
+      zlib: True
+      attrs:
+        alias: "blue"
+
+    - name: band3
+      dtype: int16
+      nodata: -9999
+      resampling_method: nearest
+      src_varname: 'band3'
+      zlib: True
+      attrs:
+        alias: "green"
+
+    - name: band4
+      dtype: int16
+      nodata: -9999
+      resampling_method: nearest
+      src_varname: 'band4'
+      zlib: True
+      attrs:
+        alias: "red"
+
+    - name: band5
+      dtype: int16
+      nodata: -9999
+      resampling_method: nearest
+      src_varname: 'band5'
+      zlib: True
+      attrs:
+        alias: "nir"
+
+    - name: band6
+      dtype: int16
+      nodata: -9999
+      resampling_method: nearest
+      src_varname: 'band6'
+      zlib: True
+      attrs:
+        alias: "swir1"
+
+    - name: band7
+      dtype: int16
+      nodata: -9999
+      resampling_method: nearest
+      src_varname: 'band7'
+      zlib: True
+      attrs:
+        alias: "swir2"
+
+    - name: EVI
+      dtype: int16
+      nodata: -9999
+      resampling_method: nearest
+      src_varname: 'EVI'
+      zlib: True
+      attrs:
+        alias: "evi"
+
+    - name: NDVI
+      dtype: int16
+      nodata: -9999
+      resampling_method: nearest
+      src_varname: 'NDVI'
+      zlib: True
+      attrs:
+        alias: "ndvi"
