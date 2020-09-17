@@ -1,10 +1,10 @@
-source_type: LC8_30_16D_STK-1
-output_type: LC8_30_16D_STK-1_ingested
+source_type: LC8_30_16D_STK_1
+output_type: LC8_30_16D_STK_1_ingested
 
 description: Landsat-8 16 days in year
 
 location: '/data/ingested/'
-file_path_template: 'LC8_30_16D_STK-1_ingested/LC8_30_16D_STK-1_ingested_{tile_index[0]}_{tile_index[1]}_{start_time}.nc'
+file_path_template: 'LC8_30_16D_STK_1_ingested/LC8_30_16D_STK_1_ingested_{tile_index[0]}_{tile_index[1]}_{start_time}.nc'
 
 global_attributes:
     title: Landsat-8 (OLI) Cube Stack 16 days (v001) - Tiled
