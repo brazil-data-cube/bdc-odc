@@ -119,6 +119,7 @@ COPY files/bdc-in-a-box bdc-in-a-box/
 RUN sudo python3 -m pip install --upgrade pip
 RUN sudo chown $ODC_USR:$ODC_USR install_aws_cli.sh\
     && sudo chown $ODC_USR:$ODC_USR install_stac2odc.sh\
+    && sudo chown -R $ODC_USR:$ODC_USR bdc-in-a-box \
     && chmod +x install_aws_cli.sh\
     && chmod +x install_stac2odc.sh
 
