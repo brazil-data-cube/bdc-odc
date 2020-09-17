@@ -1,0 +1,59 @@
+sources:
+  - product: LC8_30_16D_STK_1
+    measurements: [BAND2, BAND3, BAND4, BAND5, BAND6, BAND7]
+    group_by: solar_day
+
+date_ranges:
+  start_date: 2015-01-01
+  end_date: 2020-01-01
+  stats_duration: 3m
+  step_size: 3m
+
+location: '/data/stats/'
+
+# Output Storage Format
+storage:
+  driver: NetCDF CF
+
+  crs: +proj=aea +lat_0=-12 +lon_0=-54 +lat_1=-2 +lat_2=-22 +x_0=5000000 +y_0=10000000 +ellps=GRS80 +units=m +no_defs
+  tile_size:
+      x: 100000.0
+      y: 100000.0
+  resolution:
+      x: 30
+      y: -30
+  chunking:
+      x: 256
+      y: 256
+      time: 1
+  dimension_order: [time, y, x]
+
+computation:
+  chunking:
+    x: 1000
+    y: 1000
+
+output_products:
+  - name: ndvi_stats
+    statistic: simple_normalised_difference
+    statistic_args:
+      name: 'simple_ndvi_diff'
+      band1: band5
+      band2: band4
+      stats: [min, mean, max]
+    output_params:
+      zlib: True
+      fletcher32: True
+    file_path_template: 'LC8_30_16D_STK_1_ingested_NDVI_STATS/{name}_nwdi_{epoch_start:%Y%m%d}.tif'
+
+  - name: ndwi_stats
+    statistic: simple_normalised_difference
+    statistic_args:
+      name: 'simple_ndwi_diff'
+      band1: band5
+      band2: band7
+      stats: [min, mean, max]
+    output_params:
+      zlib: True
+      fletcher32: True
+    file_path_template: 'LC8_30_16D_STK_1_ingested_NDWI_STATS/{name}_ndwi_{epoch_start:%Y%m%d}.tif'
