@@ -1,10 +1,10 @@
 sources:
   - product: LC8_30_16D_STK_1
-    measurements: [BAND2, BAND3, BAND4, BAND5, BAND6, BAND7]
+    measurements: [band2, band3, band4, band5, band6, band7]
     group_by: solar_day
 
 date_ranges:
-  start_date: 2015-01-01
+  start_date: 2016-12-01
   end_date: 2020-01-01
   stats_duration: 3m
   step_size: 3m
@@ -44,7 +44,7 @@ output_products:
     output_params:
       zlib: True
       fletcher32: True
-    file_path_template: 'LC8_30_16D_STK_1_ingested_NDVI_STATS/{name}_nwdi_{epoch_start:%Y%m%d}.tif'
+    file_path_template: 'LC8_30_16D_STK_1_ingested_NDVI_STATS/{name}_ndvi_{y}_{x}_{epoch_start:%Y-%m-%d}_{epoch_end:%Y-%m-%d}.nc'
 
   - name: ndwi_stats
     statistic: simple_normalised_difference
@@ -56,4 +56,4 @@ output_products:
     output_params:
       zlib: True
       fletcher32: True
-    file_path_template: 'LC8_30_16D_STK_1_ingested_NDWI_STATS/{name}_ndwi_{epoch_start:%Y%m%d}.tif'
+    file_path_template: 'LC8_30_16D_STK_1_ingested_NDWI_STATS/{name}_ndwi_{y}_{x}_{epoch_start:%Y-%m-%d}_{epoch_end:%Y-%m-%d}.nc'
