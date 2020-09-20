@@ -7,8 +7,8 @@
 
 
 
-BDC-ODC documentation
-======================
+BDC-ODC's documentation
+========================
 
 The **O**\ pen **D**\ ata **C**\ ube (ODC) framework and all its tools ecosystem are currently being tested with **B**\ razil **D**\ ata **C**\ ube (BDC) data products. This integration aims to increase the set of access, visualization, and analysis tools available to the users of the various data cubes produced by the project. This documentation presents the utilities and steps for using ODC tools in the BDC data ecosystem.
 

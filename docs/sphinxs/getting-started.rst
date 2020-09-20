@@ -6,6 +6,8 @@
     under the terms of the MIT License; see LICENSE file for more details.
 
 
+.. _getting-started-lbl:
+
 Getting Started
 =================
 
@@ -18,7 +20,7 @@ This section presents the steps to configure the ODC-Core and the database to st
 
 .. toctree::
     :maxdepth: 1
-    :caption: Steps:
+    :caption: Topics:
     :titlesonly:
 
     ./getting-started/create_imagem_docker
