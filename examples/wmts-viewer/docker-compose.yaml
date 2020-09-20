@@ -1,0 +1,8 @@
+version: "3.3"
+services:
+    nodeapp:
+        restart: unless-stopped
+        container_name: odc-bdc-wmts-example
+        build:
+            context: .
+            dockerfile: docker/Dockerfile
