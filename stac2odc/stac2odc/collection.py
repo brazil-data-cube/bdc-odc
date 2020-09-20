@@ -1,46 +1,57 @@
-import stac2odc.utils as utils
+#
+# This file is part of BDC-ODC.
+# Copyright (C) 2020 INPE.
+#
+# stac2odc is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+#
 
 from collections import OrderedDict
+from stac.collection import Collection
+from stac2odc.mapper import Stac2ODCMapper
 
 
-def collection2product(collection, constants):
+def collection2product(collection: Collection, mapper: Stac2ODCMapper, **kwargs) -> OrderedDict:
     """Function to convert a STAC Collection JSON to ODC Product YAML
+
+    Args:
+        collection (stac.collection.Collection): An Collection
+        constants (dict): A dict with behavior definitions
+        mapper (stac2odc.mapper.Stac2ODCMapper): An mapper to convert STAC collection to ODC Products
+    See:
+        See the BDC STAC catalog for more information on the collections available
+        (http://brazildatacube.dpi.inpe.br/bdc-stac/0.8.0/)
     """
 
-    crs_proj4 = collection['properties']['bdc:crs']
-    if constants['is_pre_collection']:
-        crs_proj4 = utils.fix_precollection_crs(crs_proj4)
+    # ToDo: Add validators
+    return mapper.map_collection(collection, **kwargs)
 
-    product_type = utils.generate_product_type(collection)
 
-    odc_config = OrderedDict()
-    odc_config['name'] = collection['id']
-    odc_config['description'] = collection['description']
-    odc_config['metadata_type'] = constants['metadata_type']
+if __name__ == '__main__':
+    import stac
+    import yaml
 
-    odc_config['storage'] = OrderedDict()
-    odc_config['storage']['crs'] = crs_proj4
-    odc_config['storage']['resolution'] = OrderedDict()
-    first_band = next(iter(collection['properties']['bdc:bands']))
-    odc_config['storage']['resolution']['x'] = int(
-        collection['properties']['bdc:bands'][first_band]['resolution_x'])
-    odc_config['storage']['resolution']['y'] = int(
-        collection['properties']['bdc:bands'][first_band]['resolution_y']) * -1
+    import stac2odc.item
+    import stac2odc.collection
+    from stac2odc.mapper import Stac2ODCMapper09
 
-    def measurements(tag, data):
-        m = OrderedDict()
-        m['name'] = tag # data['name']
-        m['aliases'] = [data['name'], ]
-        m['dtype'] = data['data_type'].lower()
-        m['nodata'] = data['fill']
-        m['units'] = constants['units']
-        return m
+    constants = {
+        'instrument_type': 'AWFI',
+        'metadata_type': 'eo',
+        'platform_code': 'CBERS04',
+        'format_name': 'GeoTiff',
+        'units': 'm',
+        'ignore': ['quality'],
+        "is_pre_collection": False,
+        'verbose': True
+    }
+    outfile = 'test.yaml'
+    s = stac.STAC('http://brazildatacube.dpi.inpe.br/stac/', False)
+    c = s.collection('CB4_64_16D_STK-1')
+    yaml_content = stac2odc.collection.collection2product(c, Stac2ODCMapper09(), **constants)
 
-    odc_config['metadata'] = OrderedDict()
-    odc_config['metadata']['platform'] = {'code': constants['platform_code']}
-    odc_config['metadata']['instrument'] = {'name': constants['instrument_type']}
-    odc_config['metadata']['product_type'] = product_type
-    odc_config['metadata']['format'] = {'name': constants['format_name']}
-    odc_config['measurements'] = [measurements(k, v)
-                                  for k, v in collection['properties']['bdc:bands'].items() if k not in constants['ignore']]
-    return odc_config  # default_flow_style=None
+    if outfile is None:
+        print(yaml.dump(yaml_content))
+    else:
+        with open(outfile, 'w') as f:
+            yaml.dump(yaml_content, f)

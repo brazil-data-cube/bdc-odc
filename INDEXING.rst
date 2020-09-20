@@ -10,6 +10,8 @@
 Adding Products and Indexing Datasets
 =====================================
 
+> The execution of the scripts below requires the BDC image collection. If you do not have access to BDC infrastructure use the bdc-in-a-box tool.
+
 Requirements
 ------------
 
@@ -27,7 +29,7 @@ At the ODC terminal, run the following commands to download and install as requi
 
     $ git clone https://github.com/brazil-data-cube/bdc-odc.git
     $ cd bdc-odc/stac2odc
-    $ python3 setup.py install
+    $ sudo pip3 install -e .[all]
 
 The following steps are required for registration of a `Product` and indexing the `Datasets`:
     * Extract Product metadata
@@ -83,7 +85,7 @@ For each `Item` in the `Collection`, a YAML file will be created with the metada
 Add Dataset to ODC database 
 ---------------------------
 
-To register one `Dataset` in the ODC database, use the following command:
+To register one `Dataset` in the ODC database, use the following command (The file name shown in the example below may change according to the date when you made the indexing. To avoid problems, check the files in the directory).
 
 .. code-block:: shell
 
