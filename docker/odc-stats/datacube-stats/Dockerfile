@@ -1,3 +1,4 @@
+# Adapted from: https://github.com/thinkWhere/GDAL-Docker/blob/develop/3.6-ubuntu/Dockerfile
 #### Use latest Ubuntu LTS release as the base
 FROM ubuntu:bionic
 
