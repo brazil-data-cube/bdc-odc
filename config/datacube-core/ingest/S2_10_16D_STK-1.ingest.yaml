@@ -27,8 +27,8 @@ storage:
 
     crs: +proj=aea +lat_0=-12 +lon_0=-54 +lat_1=-2 +lat_2=-22 +x_0=5000000 +y_0=10000000 +ellps=GRS80 +units=m +no_defs
     tile_size:
-            x: 100000.0
-            y: 100000.0
+            x: 150000.0
+            y: 150000.0
     resolution:
             x: 64
             y: -64
