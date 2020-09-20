@@ -53,12 +53,12 @@ or:
 
 .. code-block:: shell
 
-    pip3 install sphinx sphinx_rtd_theme sphinx-copybutton sphinx-tabs
+    pip3 install sphinx sphinx_rtd_theme sphinx-copybutton sphinx-tabs sphinx-click
 
 
 or, if you prefer the ``Anaconda`` distribution::
 
-    conda install sphinx sphinx_rtd_theme sphinx-copybutton sphinx-tabs
+    conda install sphinx sphinx_rtd_theme sphinx-copybutton sphinx-tabs sphinx-click
 
 
 **4.** In order to build the HTML documentation, please, go to the ``docs`` folder::
