@@ -5,7 +5,7 @@ sources:
 
 date_ranges:
   start_date: 2016-12-01
-  end_date: 2020-01-01
+  end_date: 2020-12-01
   stats_duration: 3m
   step_size: 3m
 
@@ -36,6 +36,7 @@ computation:
 output_products:
   - name: ndvi_stats
     statistic: simple_normalised_difference
+    product_type: 'temporalstats'
     statistic_args:
       name: 'simple_ndvi_diff'
       band1: band5
@@ -48,6 +49,7 @@ output_products:
 
   - name: ndwi_stats
     statistic: simple_normalised_difference
+    product_type: 'temporalstats'
     statistic_args:
       name: 'simple_ndwi_diff'
       band1: band5
