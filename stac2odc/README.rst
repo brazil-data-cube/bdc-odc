@@ -1,11 +1,6 @@
 stac2odc
 =========
 
-.. image:: image/stac2odc.jpg
-    :alt: stac2odc
-    :height: 150
-    :align: right
-
 Tool to facilitate the indexing of STAC data in the Open Data Cube environment.
 
 Installing
