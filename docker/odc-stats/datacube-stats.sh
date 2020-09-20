@@ -1,10 +1,5 @@
 #!/bin/bash
 
-echo "Installing OSGeo GDAL"
-apt update -y && apt install build-essential git -y
-apt-get install libgdal-dev -y && pip3 install --upgrade pip \
-    && pip3 install GDAL==2.2.3
-
 echo "Installing datacube..."
 pip3 install datacube
 
