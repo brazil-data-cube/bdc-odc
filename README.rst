@@ -81,3 +81,7 @@ The above command will generate the HTML documentation under the ``_build/html``
     In order to clean the sites directory, and remove staled files, you can use the following command::
 
         make clean
+
+.. note::
+
+    In addition to the steps presented, if your system has not been installed, it is necessary to install ``stac2odc``. See the `installation page <https://github.com/brazil-data-cube/bdc-odc/tree/master/stac2odc>`_.
