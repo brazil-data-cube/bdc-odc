@@ -7,7 +7,7 @@ RUN apt-get update
 RUN apt-get upgrade -y
 
 # Install GDAL dependencies
-RUN apt-get install -y python3-pip libgdal-dev locales vim
+RUN apt-get install -y python3-pip libgdal-dev locales vim git
 
 # Ensure locales configured correctly
 RUN locale-gen en_US.UTF-8
@@ -22,8 +22,8 @@ ENV CPLUS_INCLUDE_PATH=/usr/include/gdal
 ENV C_INCLUDE_PATH=/usr/include/gdal
 
 # This will install latest version of GDAL
-RUN pip3 install GDAL==2.2.3
+RUN pip3 install --upgrade pip && pip3 install GDAL==2.2.3
 
 COPY datacube-stats.sh .
-COPY .datacube.conf $HOME/.datacube.conf
+COPY .datacube.conf /root/.datacube.conf
 RUN ./datacube-stats.sh
