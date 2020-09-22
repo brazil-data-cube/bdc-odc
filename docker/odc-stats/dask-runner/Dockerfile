@@ -1,4 +1,4 @@
-FROM daskdev/dask
+FROM daskdev/dask:2.27.0
 
 COPY .datacube.conf /root/.datacube.conf
 COPY datacube-stats.sh .

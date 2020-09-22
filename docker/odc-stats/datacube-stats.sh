@@ -1,7 +1,15 @@
 #!/bin/bash
 
 echo "Installing datacube..."
-pip3 install datacube
+
+# During the configuration of the odc-dask certain problems related
+# to the dask version were identified. To get around this problem, the way the
+# command line parameters are passed to the dask.distributed API is replaced.
+# This makes the use of dask possible even in the most recent versions.
+git clone https://github.com/opendatacube/datacube-core.git && cd datacube-core
+sed -i 's/DistributedExecutor(distributed.Client(scheduler))/DistributedExecutor(distributed.Client(":".join(map(str, scheduler))))/g' \
+  datacube/executor.py
+pip install --upgrade -e .
 
 echo "Installing digitalearthau..."
 git clone https://github.com/GeoscienceAustralia/digitalearthau && cd digitalearthau

@@ -2,7 +2,7 @@ version: "3.2"
 
 services:
   scheduler:
-    image: daskdev/dask
+    image: daskdev/dask:2.27.0
     hostname: dask-scheduler
     ports:
       - "8786:8786"
