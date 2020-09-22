@@ -11,6 +11,8 @@ Exploring data using ODC Explorer
 
 ODC Explorer is a tool that composes the ODC ecosystem created to enable the discovery and search of metadata registered in the ODC Core. All the search is done through a powerful and friendly interface.
 
+All configuration files presented in this step by step are available in the `BDC-ODC repository <https://github.com/brazil-data-cube/bdc-odc/tree/master/config/datacube-explorer>`_.
+
 .. toctree::
     :maxdepth: 1
     :caption: Topics:
