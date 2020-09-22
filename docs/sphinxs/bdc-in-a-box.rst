@@ -23,4 +23,4 @@ This page presents the use of the ``bdc-in-a-box`` tool, a utility that allows r
 
     ./bdc-in-a-box/install
     ./bdc-in-a-box/usage
-    ./bdc-in-a-box/technical_details
+    ./bdc-in-a-box/config_files

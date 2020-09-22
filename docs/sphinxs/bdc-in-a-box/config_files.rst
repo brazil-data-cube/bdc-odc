@@ -6,8 +6,8 @@
     under the terms of the MIT License; see LICENSE file for more details.
 
 
-Technical details
-===================
+Configuration files
+====================
 
 The use of a bdc-in-a-box is done with a script and two auxiliary files. In this section, we will briefly present the characteristics and possibilities with each of these files.
 

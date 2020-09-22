@@ -26,7 +26,7 @@ To start, we will generate the ``datacube-explorer`` schema inside PostgreSQL, a
 
 .. note::
 
-    If you have installed the tool using Docker, it is necessary to use the ``docker exec -ti datacube-explorer_explorer_1 bash`` command to access the container termination and then perform the execution of the command presented previously
+    If you have installed the tool using Docker, it is necessary to use the ``docker-compose exec explorer bash`` command to access the container termination and then perform the execution of the command presented previously
 
 After the execution is finished, an output similar to the one presented below should be presented. In this output, all the cataloged products will be presented::
 
