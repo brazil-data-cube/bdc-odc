@@ -26,6 +26,8 @@ The **O**\ pen **D**\ ata **C**\ ube (ODC) framework and all its tools ecosystem
     datacube-explorer
     datacube-ows
     datacube-stats
+    examples
+    config_files
 
 .. toctree::
     :maxdepth: 1
