@@ -27,3 +27,6 @@ RUN pip3 install --upgrade pip && pip3 install GDAL==2.2.3
 COPY datacube-stats.sh .
 COPY .datacube.conf /root/.datacube.conf
 RUN ./datacube-stats.sh
+
+# compression libs
+RUN pip3 install blosc lz4
