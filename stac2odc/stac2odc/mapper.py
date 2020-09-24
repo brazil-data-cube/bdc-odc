@@ -26,10 +26,12 @@ class Stac2ODCMapper(ABC):
 class Stac2ODCMapper08(Stac2ODCMapper):
 
     def generate_product_type(self, collection):
-        return "{}_{}_{}".format(
-            collection['properties']['bdc:temporal_composition']['schema'],
-            collection['properties']['bdc:temporal_composition']['step'],
-            collection['properties']['bdc:temporal_composition']['unit'])
+        if collection['bdc:temporal_composition']:
+            return "{}_{}_{}".format(
+                collection['properties']['bdc:temporal_composition']['schema'],
+                collection['properties']['bdc:temporal_composition']['step'],
+                collection['properties']['bdc:temporal_composition']['unit'])
+        return None
 
     def map_collection(self, collection, **kwargs) -> OrderedDict:
         def measurements(tag, data):
@@ -162,10 +164,12 @@ class Stac2ODCMapper08(Stac2ODCMapper):
 class Stac2ODCMapper09(Stac2ODCMapper):
 
     def generate_product_type(self, collectionobj):
-        return "{}_{}_{}".format(
-            collectionobj['bdc:temporal_composition']['schema'],
-            collectionobj['bdc:temporal_composition']['step'],
-            collectionobj['bdc:temporal_composition']['unit'])
+        if collectionobj['bdc:temporal_composition']:
+            return "{}_{}_{}".format(
+                collectionobj['bdc:temporal_composition']['schema'],
+                collectionobj['bdc:temporal_composition']['step'],
+                collectionobj['bdc:temporal_composition']['unit'])
+        return None
 
     def map_collection(self, collection, **kwargs) -> OrderedDict:
         def measurements(data):
