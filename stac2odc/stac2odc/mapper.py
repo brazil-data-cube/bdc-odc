@@ -170,7 +170,7 @@ class Stac2ODCMapper09(Stac2ODCMapper):
     def map_collection(self, collection, **kwargs) -> OrderedDict:
         def measurements(data):
             m = OrderedDict()
-            m['name'] = data['name']
+            m['name'] = data['name'].replace('-', '_')
             m['aliases'] = [data['name'], ]
             m['dtype'] = data['data_type'].lower()
             m['nodata'] = data['nodata']
@@ -185,7 +185,7 @@ class Stac2ODCMapper09(Stac2ODCMapper):
             crs_proj4 = utils.fix_precollection_crs(crs_proj4)
 
         odc_config = OrderedDict()
-        odc_config['name'] = collection['id']
+        odc_config['name'] = collection['id'].replace('-', '_')
         odc_config['description'] = collection['description']
         odc_config['metadata_type'] = kwargs['metadata_type']
 
@@ -257,7 +257,7 @@ class Stac2ODCMapper09(Stac2ODCMapper):
             # Extract image bbox
             first_band = next(iter(collection['properties']['eo:bands']))
             first_band_path = utils.href_to_path(
-                f['assets'][first_band]['href'], kwargs['basepath'])
+                f['assets'][first_band['name']]['href'], kwargs['basepath'])
 
             # build grid_spatial
             lrx, lry, ulx, uly = utils.raster_bounds(first_band_path)
@@ -277,7 +277,8 @@ class Stac2ODCMapper09(Stac2ODCMapper):
             feature['image'] = OrderedDict()
             feature['image']['bands'] = OrderedDict()
             band_counter = 1
-            for band in collection['properties']['eo:bands'].keys():
+            for bandindex in collection['properties']['eo:bands']:
+                band = bandindex['name']
                 if band not in kwargs['ignore']:
                     if band in f['assets']:
                         feature['image']['bands'][band] = OrderedDict()

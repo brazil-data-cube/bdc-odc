@@ -10,19 +10,18 @@ import os
 import yaml
 
 from loguru import logger
-from stac.collection import Collection
 from stac2odc.mapper import Stac2ODCMapper
 
 STAC_MAX_PAGE = 99999999
 STAC_ITEM_PER_PAGE = 120
 
 
-def item2dataset(collection: Collection, mapper: Stac2ODCMapper, **kwargs) -> None:
+def item2dataset(stacservice, item_filter, mapper: Stac2ODCMapper, **kwargs) -> None:
     """Function to convert a STAC Collection JSON to ODC Dataset YAML
 
     Args:
-        collection (stac.collection.Collection): An Collection
-        constants (dict): A dict with behavior definitions
+        stacservice (stac.collection.Collection): An Collection
+        item_filter (dict): A dict with behavior definitions
         mapper (stac2odc.mapper.Stac2ODCMapper): An mapper to convert STAC collection to ODC Datasets
     See:
         See the BDC STAC catalog for more information on the collections available
@@ -40,19 +39,21 @@ def item2dataset(collection: Collection, mapper: Stac2ODCMapper, **kwargs) -> No
         logger.info("Collecting information from STAC...")
 
     for page in range(1, STAC_MAX_PAGE + 1):
-        if max_items is not None:
-            if max_items == total_items:
-                break
+        if max_items is not None and max_items == total_items:
+            break
 
         if limit > (max_items - total_items):
             limit = (max_items - total_items)
 
-        features = collection.get_items(
-            filter={'page': page, 'limit': limit}).features
+        collection = stacservice.collection(item_filter["collections"][0])
+        features = stacservice.search({
+            **item_filter, **{"page": page, "limit": limit}
+        }).features
 
         if len(features) == 0:
             break
 
+        # Multiple dataset is ignored!
         odc_items = mapper.map_dataset(collection, features, **kwargs)
         total_items += len(odc_items)
 
@@ -73,7 +74,7 @@ if __name__ == '__main__':
 
     import stac2odc.item
     import stac2odc.collection
-    from stac2odc.mapper import Stac2ODCMapper08
+    from stac2odc.mapper import Stac2ODCMapper09
 
     constants = {
         'instrument_type': 'AWFI',
@@ -90,6 +91,6 @@ if __name__ == '__main__':
         "download_out": './'
     }
 
-    s = stac.STAC('http://brazildatacube.dpi.inpe.br/bdc-stac/0.8.0/', True)
-    c = s.collection('CB4_64_16D_STK_v1')
-    item2dataset(c, Stac2ODCMapper08(), **constants)
+    # stacservice, item_filter, mapper: Stac2ODCMapper, **kwargs
+    s = stac.STAC('http://brazildatacube.dpi.inpe.br/stac/', False)
+    item2dataset(s, {'collections': ['CB4_64_16D_STK-1']}, Stac2ODCMapper09(), **constants)
