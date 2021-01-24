@@ -1,31 +1,37 @@
 # BANDS
 ## Alias for band names
 bands_cbers = {
-    "red": [],
-    "green": [],
-    "blue": [],
-    "nir": [],
-    "evi": [],
-    "ndvi": [],
-    "ClearOb": [],
-    "Provenance": [],
-    "TotalOb": []
+    "BAND13": ["blue"],
+    "BAND14": ["green"],
+    "BAND15": ["red"],
+    "BAND16": ["nir"],
+    "CLEAROB": ["ClearOb"],
+    "EVI": ["evi"],
+    "NDVI": ["ndvi"],
+    "PROVENANCE": ["Provenance"],
+    "TOTALOB": ["TotalOb"]
 }
 
 bands_ls = {
-    "red": [],
-    "green": [],
-    "blue": [ ],
-    "nir": [ "near_infrared" ],
-    "swir1": [ "shortwave_infrared_1", "near_shortwave_infrared" ],
-    "swir2": [ "shortwave_infrared_2", "far_shortwave_infrared" ],
+    "band1": ["coastal"],
+    "band2": ["blue"],
+    "band3": ["green" ],
+    "band4": [ "red" ],
+    "band5": [ "nir" ],
+    "band6": [ "swir1","shortwave_infrared_1", "near_shortwave_infrared" ],
+    "band7": [ "swir2","shortwave_infrared_2", "far_shortwave_infrared" ],
+    "CLEAROB": ["ClearOb"],
+    "EVI": ["evi"],
+    "NDVI": ["ndvi"],
+    "PROVENANCE": ["Provenance"],
+    "TOTALOB": ["TotalOb"]
 }
 
 # RESLIM
 reslim_cbers = {
     "wms": {
         "zoomed_out_fill_colour": [150, 180, 200, 160],
-        "min_zoom_factor": 35.0,
+        "min_zoom_factor": 2.0,
         # "max_datasets": 16, # Defaults to no dataset limit
     },
     "wcs": {
@@ -34,8 +40,8 @@ reslim_cbers = {
 
 reslim_landsat = {
     "wms": {
-        "zoomed_out_fill_colour": [150,180,200,160],
-        "min_zoom_factor": 35.0,
+        "zoomed_out_fill_colour": [150, 180, 200, 160],
+        "min_zoom_factor": 2.0,
         # "max_datasets": 16, # Defaults to no dataset limit
     },
     "wcs": {
@@ -44,19 +50,38 @@ reslim_landsat = {
 }
 
 # STYLES
+# STYLES
 style_cbers_simple_rgb = {
         "name": "simple_rgb",
         "title": "Simple RGB",
         "abstract": "Simple true-colour image, using the red, green and blue bands",
         "components": {
             "red": {
-                "red": 1.0
+                "BAND15": 1.0
             },
             "green": {
-                "green": 1.0
+                "BAND14": 1.0
             },
             "blue": {
-                "blue": 1.0
+                "BAND13": 1.0
+            }
+        },
+        "scale_range": [0.0, 3000.0]
+}
+
+style_ls8_simple_rgb = {
+        "name": "simple_ls8_rgb",
+        "title": "Simple LS8 RGB",
+        "abstract": "Simple true-colour image, using the red, green and blue bands",
+        "components": {
+            "red": {
+                "band4": 1.0
+            },
+            "green": {
+                "band3": 1.0
+            },
+            "blue": {
+                "band2": 1.0
             }
         },
         "scale_range": [0.0, 3000.0]
@@ -121,9 +146,8 @@ ows_cfg = {
                 "vertical_coord": "y"
             }
         },
-        # XXX: CHANGE ME
         "allowed_urls": [
-            "http://127.0.0.1:5000"
+            "http://brazildatacube.dpi.inpe.br/odc/ows/"
         ],
         # Metadata to go straight into GetCapabilities documents
         "title": "Brazil Data Cube - OGC Web Services",
@@ -172,7 +196,7 @@ ows_cfg = {
     "wcs": {
         # Config for WCS service, for all products/coverages
         "default_geographic_CRS": "EPSG:4326",
-        # "native_wcs_format": "GeoTIFF",
+        "native_wcs_format": "GeoTIFF",
         "formats": {
             "GeoTIFF": {
                 # "renderer": "datacube_ows.wcs_utils.get_tiff",
@@ -202,28 +226,61 @@ ows_cfg = {
             "title": "Brazil Data Cube - OGC Web Services",
             "abstract": "Brazil Data Cube OGC Web Services",
             "layers": [
-                # Hierarchical list of layers.  May be a combination of unnamed/unmappable folder-layers or named mappable layers.
+            # Hierarchical list of layers.  May be a combination of unnamed/unmappable folder-layers or named mappable layers.
                 {
-                    "title": "CBERS-4",
-                    "abstract": "CBERS4 COLLECTION",
+                    "title": "Landsat-8",
+                    "abstract": "Landsat-8 (OLI) Cube Collections (VERSION 1)",
                     "layers": [
                     {
-                        "title": "CBERS-4 16 days",
-                        "name": "CB4_64_16D_STK_v1",
-                        "abstract": "CBERS4 16 Days Collection",
-                        "product_name": "CB4_64_16D_STK_v1",
+                        "title": "Landsat-8 (OLI) Cube Stack 16 days - v001",
+                        "name": "LC8_30_16D_STK_1",
+                        "abstract": "Landsat-8 (OLI) Cube Stack 16 days - v001",
+                        "product_name": "LC8_30_16D_STK_1",
+                        "bands": bands_ls,
+                        "resource_limits": reslim_landsat,
+                        "image_processing": {
+                            "extent_mask_func": "datacube_ows.ogc_utils.mask_by_val",
+                            "always_fetch_bands": [],
+                            "manual_merge": True,
+                            "fuse_func": "datacube.helpers.ga_pq_fuser",
+                            "apply_solar_corrections": False,
+                        },
+                        "wcs": {
+                            "native_crs": "+proj=aea +lat_0=-12 +lon_0=-54 +lat_1=-2 +lat_2=-22 +x_0=5000000 +y_0=10000000 +ellps=GRS80 +units=m +no_defs",
+                            "native_resolution": [30, -30],
+                            "native_wcs_format": "GeoTIFF",
+                            "default_bands": ["band4", "band3", "band2"]
+                        },
+                        "styling": {
+                            "default_style": "simple_ls8_rgb",
+                            "styles": [
+                                style_ls8_simple_rgb
+                            ]
+                        }
+                    }]
+                },
+                {
+                    "title": "CBERS-4",
+                    "abstract": "CBERS4 COLLECTIONS (VERSION 1)",
+                    "layers": [
+                    {
+                        "title": "CBERS-4 (AWFI) Cube Stack 16 days - v001",
+                        "name": "CB4_64_16D_STK_1",
+                        "abstract": "CBERS-4 (AWFI) Cube Stack 16 days - v001",
+                        "product_name": "CB4_64_16D_STK_1",
                         "bands": bands_cbers,
                         "resource_limits": reslim_cbers,
                         "image_processing": {
                             "extent_mask_func": "datacube_ows.ogc_utils.mask_by_val",
                             "always_fetch_bands": [],
-                            "manual_merge": True, # TODO: VERIFY THIS
+                            "manual_merge": True,
                             "apply_solar_corrections": False,
                         },
                         "wcs": {
                             "native_crs": "+proj=aea +lat_0=-12 +lon_0=-54 +lat_1=-2 +lat_2=-22 +x_0=5000000 +y_0=10000000 +ellps=GRS80 +units=m +no_defs",
                             "native_resolution": [64, -64],
-                            "default_bands": ["red", "green", "blue"]
+                            "native_wcs_format": "GeoTIFF",
+                            "default_bands": ["BAND15", "BAND14", "BAND13"]
                         },
                         "styling": {
                             "default_style": "simple_rgb",

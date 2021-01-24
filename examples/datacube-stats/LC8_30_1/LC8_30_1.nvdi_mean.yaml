@@ -1,0 +1,51 @@
+sources:
+  - product: LC8_30_1
+    measurements: [NDVI]
+
+date_ranges:
+  start_date: 2020-08-01
+  end_date:  2020-09-01
+
+location: /data/stats/
+
+storage:
+  driver: GeoTIFF
+
+  crs: +proj=aea +lat_0=-12 +lon_0=-54 +lat_1=-2 +lat_2=-22 +x_0=5000000 +y_0=10000000 +ellps=GRS80 +units=m +no_defs
+  tile_size:
+    x: 100000.0
+    y: 100000.0
+  resolution:
+    x: 64
+    y: -64
+  chunking:
+    x: 256
+    y: 256
+    time: 1
+  dimension_order: [time, x, y]
+
+input_region:
+  from_file: ${PWD}/datafiles/brazil_tocantins_state_epsg4674.shp
+
+computation:
+  chunking:
+    x: 1000
+    y: 1000
+
+output_products:
+  - name: LC8_30_1_tocantins_median
+    product_type: ndvi_median
+    statistic: simple
+    statistic_args:
+      reduction_function: median
+    output_params:
+      zlib: True
+      fletcher32: True
+    metadata:
+      format:
+        name: GeoTIFF
+      platform:
+        code: LC8I
+      instrument:
+        name:  OLI
+    file_path_template: 'LC8_30_1_tocantins_ndvi_mean/{name}_ndvi_{y}_{x}_{epoch_start:%Y-%m-%d}_{epoch_end:%Y-%m-%d}.tif'

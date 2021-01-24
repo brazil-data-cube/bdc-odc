@@ -1,0 +1,7 @@
+@import url("css/theme.css");
+
+.wy-side-nav-search .wy-dropdown>a, .wy-side-nav-search>a {
+    color: #191970;
+}
+
+.right {text-align: right;}
