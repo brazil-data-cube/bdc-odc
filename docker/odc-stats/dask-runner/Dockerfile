@@ -1,6 +1,6 @@
-FROM daskdev/dask
+FROM daskdev/dask:2.27.0
 
-COPY .datacube.conf $HOME/.datacube.conf
+COPY .datacube.conf /root/.datacube.conf
 COPY datacube-stats.sh .
 
 RUN apt update -y && apt install build-essential git -y \

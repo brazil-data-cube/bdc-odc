@@ -8,8 +8,8 @@
 import os
 from setuptools import find_packages, setup
 
-readme = open('README.md').read()
-history = open('CHANGES.md').read()
+readme = open('README.rst').read()
+history = open('CHANGES.rst').read()
 
 docs_require = []
 

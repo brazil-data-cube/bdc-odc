@@ -1,0 +1,3 @@
+URL_PREFIX = "/bdc/odc/"
+CUSTOM_CRS_CONFIG_FILE = "custom-crs-file.json"
+CUBEDASH_DEFAULT_PRODUCTS = ("CB4_64_16D_STK_1", "LC8_30_16D_STK_1")
