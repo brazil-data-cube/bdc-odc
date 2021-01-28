@@ -9,14 +9,14 @@ import WMTSCapabilities from 'ol/format/WMTSCapabilities';
 var map;
 var parser = new WMTSCapabilities();
 
-fetch('http://brazildatacube.dpi.inpe.br/odc/ows/wmts?request=GetCapabilities&service=WMTS&version=1.0.0')
+fetch('https://brazildatacube.dpi.inpe.br/opendatacube/ows/wmts?request=GetCapabilities&service=WMTS&version=1.0.0')
   .then(function (response) {
     return response.text();
   })
   .then(function (text) {
     var result = parser.read(text);
     var options = optionsFromCapabilities(result, {
-      layer: 'CB4_64_16D_STK_1',
+      layer: 'S2_10_16D_STK_1',
       matrixSet: 'WholeWorld_WebMercator',
     });
 
