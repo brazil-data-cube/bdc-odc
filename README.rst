@@ -17,13 +17,13 @@ A Shareable Collection of Open Data Cube Scripts & Tools
         :target: https://www.tidyverse.org/lifecycle/#experimental
         :alt: Software Life Cycle
 
-.. image:: https://img.shields.io/discord/689541907621085198?logo=discord&logoColor=ffffff&color=7389D8
-        :target: https://discord.com/channels/689541907621085198#
-        :alt: Join us at Discord
-
 .. image:: https://readthedocs.org/projects/bdc-odc-docs/badge/?version=latest
         :target: https://bdc-odc-docs.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status
+
+.. image:: https://img.shields.io/discord/689541907621085198?logo=discord&logoColor=ffffff&color=7389D8
+        :target: https://discord.com/channels/689541907621085198#
+        :alt: Join us at Discord
  
 About
 -----
