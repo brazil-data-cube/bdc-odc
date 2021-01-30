@@ -1,7 +1,9 @@
 stac2odc (Legacy)
 ==================
 
-> There is a new version of this library, which features the mapping of any STAC catalog, even with its specificities. This Legacy version is being maintained to support some operations that are not yet in the new version. 
+Notice:
+
+    There is a new version of this library, which features the mapping of any STAC catalog, even with its specificities. This Legacy version is being maintained to support some operations that are not yet in the new version. 
 
 Tool to facilitate the indexing of STAC data in the Open Data Cube environment.
 
