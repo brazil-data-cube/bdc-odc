@@ -3,3 +3,4 @@ sphinx_rtd_theme
 sphinx-copybutton
 sphinx-tabs
 sphinx-click
+./stac2odc/
