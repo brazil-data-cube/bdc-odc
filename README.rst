@@ -13,20 +13,24 @@ A Shareable Collection of Open Data Cube Scripts & Tools
         :target: https://github.com/brazil-data-cube/bdc-odc/blob/master/LICENSE
         :alt: Software License
 
-
 .. image:: https://img.shields.io/badge/lifecycle-experimental-orange.svg
         :target: https://www.tidyverse.org/lifecycle/#experimental
         :alt: Software Life Cycle
-
 
 .. image:: https://img.shields.io/discord/689541907621085198?logo=discord&logoColor=ffffff&color=7389D8
         :target: https://discord.com/channels/689541907621085198#
         :alt: Join us at Discord
 
+.. image:: https://readthedocs.org/projects/bdc-odc-docs/badge/?version=latest
+        :target: https://bdc-odc-docs.readthedocs.io/en/latest/?badge=latest
+        :alt: Documentation Status
+ 
 About
 -----
 
 The **O**\ pen **D**\ ata **C**\ ube (ODC) framework and all its tools ecosystem are currently being tested with **B**\ razil **D**\ ata **C**\ ube (BDC) data products. This integration aims to increase the set of access, visualization, and analysis tools available to the users of the various data cubes produced by the project. This repository presents the utilities and steps for using ODC tools in the BDC data ecosystem.
+
+`Documentation is here <https://bdc-odc-docs.readthedocs.io/en/latest/>`_
 
 Generating the Documentation
 ----------------------------
