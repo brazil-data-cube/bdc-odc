@@ -3,7 +3,7 @@ stac2odc (Legacy)
 
 Notice:
 
-    There is a new version of this library, which features the mapping of any STAC catalog, even with its specificities. This Legacy version is being maintained to support some operations that are not yet in the new version. [New version is here](https://github.com/brazil-data-cube/stac2odc).
+    There is a new version of this library, which features the mapping of any STAC catalog, even with its specificities. This Legacy version is being maintained to support some operations that are not yet in the new version. `New version is here <https://github.com/brazil-data-cube/stac2odc>`_
 
 Tool to facilitate the indexing of STAC data in the Open Data Cube environment.
 
