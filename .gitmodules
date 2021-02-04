@@ -1,0 +1,9 @@
+[submodule "modules/datacube-ows"]
+	path = modules/datacube-ows
+	url = https://github.com/brazil-data-cube/datacube-ows
+[submodule "modules/datacube-explorer"]
+	path = modules/datacube-explorer
+	url = https://github.com/brazil-data-cube/datacube-explorer
+[submodule "modules/datacube-ui"]
+	path = modules/datacube-ui
+	url = https://github.com/brazil-data-cube/datacube-ui
