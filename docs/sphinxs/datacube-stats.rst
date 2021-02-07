@@ -9,7 +9,7 @@
 Analyzing large volumes of data with ODC Stats
 =================================================
 
-To facilitate the process of statistical analysis in large volumes of data, within the ODC ecosystem is available ``datacube-stats``. This tool allows the user to declare the operations that need to be done without worrying about implementation. In BDC-ODC, the ``datacube-stats`` is also configured, being able to work with distributed and parallel operations. This section shows the steps for tool configuration.
+To facilitate the process of statistical analysis of large volumes of data, the ODC ecosystem makes available ``datacube-stats``. This tool allows the user to declare the operations that need to be done without worrying about implementation. In BDC-ODC, the ``datacube-stats`` is also configured, able to work with both distributed and parallel operations. This section shows the steps for tool configuration.
 
 All configuration files presented in this step by step are available in the `BDC-ODC repository <https://github.com/brazil-data-cube/bdc-odc/tree/master/docker/odc-stats>`_.
 
