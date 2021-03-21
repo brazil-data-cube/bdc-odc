@@ -15,6 +15,9 @@ import stac2odc.collection
 import stac2odc.utils as utils
 import stac2odc.mapper as mapper
 
+STAC_DEFAULT_IGNORED_BANDS = [
+    "ClearOb", "Provenance", "TotalOb"
+]
 
 STAC_MAPPER_VERSIONS = {
     '0.8.0': mapper.Stac2ODCMapper08,
@@ -39,7 +42,7 @@ def cli():
 @click.option('--stac-version', default='0.9.0', help = 'Set the STAC version (e. g. 0.9.0')
 @click.option('--basepath', default='/gfs', help='Repository base path')
 @click.option('-o', '--outpath', default='./', help='Output path')
-@click.option('--ignore', default=['quality'], help='List of bands to ignore')
+@click.option('--ignore', default=STAC_DEFAULT_IGNORED_BANDS, help='List of bands to ignore')
 @click.option('-m', '--max-items', default=None, help='Max items', required=True)
 @click.option('--pre-collection', default=False, is_flag=True,
               help="Defines whether the collection belongs to the pre-collection")
@@ -86,7 +89,7 @@ def item2dataset_cli(collection, instrument, code, format, units, url, stac_vers
 @click.option('--url', default='http://brazildatacube.dpi.inpe.br/stac/', help='BDC STAC url.')
 @click.option('--stac-version', default='0.9.0', help = 'Set the STAC version (e. g. 0.9.0')
 @click.option('-o', '--outfile', default=None, help='Output file')
-@click.option('--ignore', default=['quality'], help='List of bands to ignore', multiple=True)
+@click.option('--ignore', default=STAC_DEFAULT_IGNORED_BANDS, help='List of bands to ignore', multiple=True)
 @click.option('--pre-collection', default=False, is_flag=True,
               help="Defines whether the collection belongs to the pre-collection")
 @click.option('--verbose', default=False, is_flag=True, help='Enable verbose mode')
