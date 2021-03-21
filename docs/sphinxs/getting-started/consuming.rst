@@ -25,7 +25,7 @@ Use the command below to create an instance of the ODC container with support fo
                --env DB_USERNAME=opendatacube \
                --env DB_PASSWORD=secreto \
                --env DB_PORT=5432 \
-               local/odc-jupyter:1.7 jupyter notebook --ip=0.0.0.0 --port=8889 --notebook-dir=/data
+               local/odc-jupyter:1.7 jupyter notebook --ip=0.0.0.0 --port=8889
 
 
 .. note::

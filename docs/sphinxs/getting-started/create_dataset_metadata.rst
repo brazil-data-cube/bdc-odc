@@ -26,7 +26,11 @@ To extract the metadata from the datasets, it is necessary to define the collect
                                --instrument AWFI \
                                -m 3 \
                                --download \
-                               --download-out /data
-
+                               --download-out /data \
+                               --access-token BDC_ACCESS_TOKEN
 
 The above command will download 03 items from the data cube ``CB4_64_16D_STK-1``, saved in the ``/data`` directory. The descriptions of these items will be placed in the directory ``~/products/CB4_64_16D_STK_1/datasets/``. The directory tree created in the ``/data`` folder follows the same organization used in the BDC.
+
+.. note::
+
+    Access to the data, done by the above command, depends on authentication to the Brazil Data Cube project services. Replace the value ``BDC_ACCESS_TOKEN`` with your access key. If you do not have this key, it can be generated through the `BDC Portal <https://brazildatacube.dpi.inpe.br/portal/>`_ .

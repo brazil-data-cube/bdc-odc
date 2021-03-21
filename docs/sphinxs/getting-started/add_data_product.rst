@@ -17,7 +17,7 @@ To use this tool, first access the ``ODC-Core`` container::
 
 Inside the container, execute the commands to download the ``bdc-odc`` repository, where ``stac2odc`` is, and make its installation::
 
-    git clone https://github.com/brazil-data-cube/bdc-odc.git
+    https://github.com/brazil-data-cube/bdc-odc
 
     cd bdc-odc/stac2odc
 
@@ -45,8 +45,12 @@ Now, using ``stac2odc``, do the extraction of the product settings ``CB4_64_16D_
                                 --units m \
                                 -p CBERS4 \
                                 --instrument AWFI \
-                                --type eo
+                                --type eo  \
+                               --access-token BDC_ACCESS_TOKEN
 
+.. note::
+
+    Access to the data, done by the above command, depends on authentication to the Brazil Data Cube project services. Replace the value ``BDC_ACCESS_TOKEN`` with your access key. If you do not have this key, it can be generated through the `BDC Portal <https://brazildatacube.dpi.inpe.br/portal/>`_ .
 
 .. note::
 
@@ -73,4 +77,4 @@ To check if everything is right, list the products available in the ``ODC-Core``
 
 The output of the above command should be something like::
 
-    CB4_64_16D_STK_1  CBERS 4 version 1
+    CB4_64_16D_STK_1  This datacube was generated with all available surface reflectance images from CB4_64 cube. The data is provided with 64 meters of spatial resolution, reprojected and cropped to BDC_LG grid, considering a temporal compositing function of 16 days using the best pixel approach (Stack)
