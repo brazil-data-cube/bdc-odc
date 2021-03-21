@@ -10,6 +10,3 @@ RUN pip3 install \
 USER $ODC_USR
 WORKDIR /home/$ODC_USR
 EXPOSE 8889
-
-CMD ["notebook", "--no-browser", "--ip=\"*\"", "--port=8889"]
-ENTRYPOINT ["jupyter"]

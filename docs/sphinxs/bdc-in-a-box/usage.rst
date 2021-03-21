@@ -43,3 +43,7 @@ After this, you can run the bdc-in-a-box.sh script, it will record each of the d
 .. code-block:: shell
 
         ./bdc-in-a-box.sh
+
+.. note::
+
+    Access to the data, done by the above command, depends on authentication to the Brazil Data Cube project services. Set the ``BDC_ACCESS_TOKEN`` environment variable with your access key. If you do not have this key, it can be generated through the `BDC Portal <https://brazildatacube.dpi.inpe.br/portal/>`_ .

@@ -13,10 +13,10 @@ With the products and their cataloged datasets, it is possible to perform a data
 
 As in all other steps presented in this tutorial, the completion of the ingestion process requires a YAML file. For this case, ``stac2odc`` has no utilities available yet
 
-To get around this issue and make the ingestion process easy, use the file `CB4_64_16D_STK_1.ingest.yaml <https://raw.githubusercontent.com/brazil-data-cube/bdc-odc/master/config/datacube-core/ingest/CB4_64_16D_STK-1.ingest.yaml>`_ is shown below, which contains the description of this operation.
+To get around this issue and make the ingestion process easy, use the file `CB4_64_16D_STK-1.ingest.yaml <https://raw.githubusercontent.com/brazil-data-cube/bdc-odc/master/config/datacube-core/ingest/CB4_64_16D_STK-1.ingest.yaml>`_ is shown below, which contains the description of this operation.
 
 .. code-block:: yaml
-    :caption: File with the description of the ingestion process of the product ``CB4_64_16D_STK_1``.
+    :caption: File with the description of the ingestion process of the product ``CB4_64_16D_STK-1``.
 
     source_type: CB4_64_16D_STK_1
     output_type: CB4_64_16D_STK_1_ingested
@@ -27,7 +27,7 @@ To get around this issue and make the ingestion process easy, use the file `CB4_
     file_path_template: 'CB4_64_16D_STK_1_ingested/CB4_64_16D_STK_1_ingested_{tile_index[0]}_{tile_index[1]}_{start_time}.nc'
 
     global_attributes:
-        title: CBERS 4 ingested
+        title: CBERS-4 (AWFI) Cube Stack 16 days (v001) - Tiled
         summary: CBERS-4 data product
         source: CBERS 4 version 1
         institution: INPE
@@ -36,7 +36,7 @@ To get around this issue and make the ingestion process easy, use the file `CB4_
         keywords: REFLECTANCE,CBERS,EARTH SCIENCE
         platform: CBERS-4
         processing_level: L2
-        product_version: '1.0'
+        product_version: 'v001'
         product_suite: INPE CBERS4
         project: BDC
         naming_authority: bdc.inpe
@@ -59,55 +59,51 @@ To get around this issue and make the ingestion process easy, use the file `CB4_
         dimension_order: ['time', 'y', 'x']
 
     measurements:
-        - name: blue
+        - name: BAND13
           dtype: int16
           nodata: -9999
           resampling_method: nearest
-          src_varname: 'blue'
+          src_varname: 'BAND13'
           zlib: True
           attrs:
-            long_name: "BAND13"
-            alias: "BAND13"
+            alias: "blue"
 
-        - name: evi
+        - name: EVI
           dtype: int16
           nodata: -9999
           resampling_method: nearest
-          src_varname: 'evi'
+          src_varname: 'EVI'
           zlib: True
           attrs:
-            long_name: "EVI"
-            alias: "EVI"
+            alias: "evi"
 
-        - name: green
+        - name: BAND14
           dtype: int16
           nodata: -9999
           resampling_method: nearest
-          src_varname: 'evi'
+          src_varname: 'BAND14'
           zlib: True
           attrs:
-            long_name: "BAND14"
-            alias: "BAND14"
+            alias: "green"
 
-        - name: ndvi
+        - name: NDVI
           dtype: int16
           nodata: -9999
           resampling_method: nearest
-          src_varname: 'ndvi'
+          src_varname: 'NDVI'
           zlib: True
           attrs:
-            long_name: "BAND16"
-            alias: "BAND16"
+            alias: "ndvi"
 
-        - name: red
+        - name: BAND15
           dtype: int16
           nodata: -9999
           resampling_method: nearest
-          src_varname: 'red'
+          src_varname: 'BAND15'
           zlib: True
           attrs:
-            long_name: "BAND15"
-            alias: "BAND15"
+            alias: "red"
+
 
 
 .. note::
@@ -117,7 +113,7 @@ To get around this issue and make the ingestion process easy, use the file `CB4_
 The ingestion process present in the file ``CB4_64_16D_STK-1.ingest.yaml`` performs the data's ``compression`` and applies ``tiling`` so that the data's recovery is made faster. The generation of the ingestion is presented below::
 
     sudo datacube -v ingest \
-                  -c CB4_64_16D_STK_v1.ingest.yaml \
+                  -c CB4_64_16D_STK-1.ingest.yaml \
                   --executor multiproc 2
 
 
