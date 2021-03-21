@@ -6,6 +6,7 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 #
 
+import os
 import click
 import stac
 import stac2odc.collection
