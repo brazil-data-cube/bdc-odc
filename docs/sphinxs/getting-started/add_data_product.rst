@@ -17,7 +17,7 @@ To use this tool, first access the ``ODC-Core`` container::
 
 Inside the container, execute the commands to download the ``bdc-odc`` repository, where ``stac2odc`` is, and make its installation::
 
-    https://github.com/brazil-data-cube/bdc-odc
+    git clone https://github.com/brazil-data-cube/bdc-odc
 
     cd bdc-odc/stac2odc
 
