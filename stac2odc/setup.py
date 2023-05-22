@@ -27,7 +27,7 @@ install_requires = [
     'tqdm==4.48.2',
     'loguru==0.5.1',
     'gdal==2.4',
-    'requests==2.22.0',
+    'requests==2.31.0',
     'jsonschema==3.2.0',
     'pyyaml>=5.3.1',
     'stac.py',
